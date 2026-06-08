@@ -1,0 +1,177 @@
+# =============================================================================
+# FOUNDATIONAL HUMAN-TRANSLATION COMMISSION SPEC  —  Spanish -> Nasa Yuwe (Paez)
+# =============================================================================
+# This is the answer to: "what data must humans translate (Spanish -> Nasa Yuwe)
+# for a WELL-ROUNDED model?" It is a capability-purchase plan, not a sentence
+# dump: each bucket buys a distinct competence the existing 24,229-pair base
+# lacks. The En<->Zh proxy (configs/ablations.yaml, Stage-B) ranks these buckets
+# by signal-per-sentence BEFORE any human translation dollars are spent; the
+# proxy "train-on-everything -> diagnose deficiencies" pass (eval_stratified.py)
+# tells us which buckets to OVER-commission.
+#
+# Status: SPEC ONLY. No translation is commissioned and no GPU is provisioned
+# until explicitly approved. Targets are the recommended cut; the proxy reorders
+# them. FLORES+ (and NTREX/AmericasNLP-test) are EVAL-ONLY and quarantined.
+# =============================================================================
+
+meta:
+  target_language: "Nasa Yuwe (Paez)"        # ISO 639-3: pbb
+  source_language: "Spanish"                  # es
+  typology: "polysynthetic; rich verbal suffix chains, evidentiality, agreement"
+  bottleneck: "data (human translation), not compute"
+  budget_sentences_train: 30000               # new pairs to commission for training
+  budget_sentences_eval: 3001                 # reserved, never trained on
+  diversity_cap_per_domain: 0.25              # no single domain > 25% of train mix
+
+# ---------------------------------------------------------------------------
+# What we ALREADY hold (do NOT re-commission). Skews formal/written + bare vocab.
+# Used as the non-negotiable base of every proxy ablation and of the final model.
+# ---------------------------------------------------------------------------
+existing_base:
+  pairs: 24229
+  registers_covered: [legal_constitution, biblical, dictionary_vocabulary,
+                      uniandes_thesis_splits]
+  gap_diagnosis: >
+    Over-indexed on formal/written legal + biblical text and isolated vocabulary.
+    Missing: spoken/conversational register, systematic morphological coverage,
+    health/crisis, contemporary news, education register, and a held-out
+    multi-domain eval set. AmericasNLP-2025 added a Nasa side but it is
+    constitution-only -> low diversity, does NOT close these gaps.
+
+# ---------------------------------------------------------------------------
+# EVAL GOLD — translate FIRST, then QUARANTINE. Without this we cannot tell if
+# more training data helps. Stratified scoring (topic/length/feature/direction)
+# runs on these via eval_stratified.py.
+# ---------------------------------------------------------------------------
+eval_quarantine:
+  - id: flores_plus
+    sentences: 3001
+    spanish_source: "FLORES+ Spanish side (pro-translated, supported workflow)"
+    why: "domain-stratified gold; ~10 topics; the deficiency-diagnosis backbone"
+    train_on: false
+  - id: americasnlp_test
+    sentences: 500
+    spanish_source: "AmericasNLP-2025 Nasa test split (already exists)"
+    why: "external comparability; constitution-domain only -> secondary eval"
+    train_on: false
+  # NTREX-128 (news) is the En<->Zh proxy's second gold set (eval-only); the
+  # real Es<->Nasa analogue is FLORES+ above. See configs/ablations.yaml eval.
+
+# ---------------------------------------------------------------------------
+# FOUNDATIONAL TRAINING BUCKETS — priority order. `proxy_subset` links each
+# bucket to the En<->Zh Stage-B ablation that measures its value first.
+# `priority`: 1 = translate first. `leverage`: a-priori signal-per-sentence.
+# ---------------------------------------------------------------------------
+buckets:
+
+  - id: general_backbone
+    priority: 1
+    target_sentences: 6000
+    capability: "broad domain-balanced encyclopedic coverage (training spine)"
+    spanish_source: "OLDI / NLLB-Seed (~6k, Spanish source side public)"
+    proxy_subset: plus_seed
+    proxy_zh_cost: "gemini (zh side not public)"
+    leverage: high
+    notes: "Recommended default backbone; most topic coverage per sentence."
+
+  - id: grammar_morphology_elicitation
+    priority: 1
+    target_sentences: 5000
+    capability: >
+      systematic morphology: verbal suffix chains, tense/aspect/mood,
+      person/number agreement, possession, valence/transitivity, negation,
+      evidentiality — via minimal pairs (one feature varies at a time).
+    spanish_source: "AVENUE elicitation + Dahl TMA + PAWS + Swadesh-in-frames"
+    proxy_subset: plus_morph        # + plus_grammar_synth for explicit coverage
+    proxy_zh_cost: "generate sentences, then gemini zh"
+    leverage: highest
+    notes: >
+      HIGHEST-LEVERAGE SPEND for a polysynthetic target. 5k systematic minimal
+      pairs teach more morphology than 15k random sentences. This is exactly
+      what constitution/AmericasNLP data cannot fake. Pair with the synthetic
+      grammar-coverage set (configs/grammar_coverage_spec.yaml).
+
+  - id: health_crisis
+    priority: 1
+    target_sentences: 4000
+    capability: "health / crisis / public-health communication register"
+    spanish_source: "TICO-19 (~3k, es public) + Gamayun 1k humanitarian"
+    proxy_subset: plus_health
+    proxy_zh_cost: "free (TICO-19 zh exists) + gemini (gamayun)"
+    leverage: high
+    notes: "Highest real-world community value; distinct register; high BLEU/$."
+
+  - id: daily_conversational
+    priority: 2
+    target_sentences: 4000
+    capability: "spoken / informal / conversational register"
+    spanish_source: "NLLB Multi-Domain (informal speech) + Tatoeba-style es"
+    proxy_subset: plus_domain
+    proxy_zh_cost: "gemini"
+    leverage: high
+    notes: >
+      Existing base has ~zero spoken register. Expected (with morphology) to
+      show the largest marginal signal in the proxy because no current source
+      can fake it.
+
+  - id: news_contemporary
+    priority: 2
+    target_sentences: 3000
+    capability: "named entities, numbers, dates, current events (anti-hallucination)"
+    spanish_source: "NLLB-MD News / WMT es-news"
+    proxy_subset: plus_domain
+    proxy_zh_cost: "gemini (proxy gold = NTREX-128 news, eval-only)"
+    leverage: medium
+    notes: "Teaches entity/number fidelity; cheap synthetic NE/number drills help."
+
+  - id: education_pedagogical
+    priority: 2
+    target_sentences: 3000
+    capability: "graded-reader / classroom register (likely deployment domain)"
+    spanish_source: "CRIC cartillas (bilingual EIB) / SIL graded readers"
+    proxy_subset: plus_domain
+    proxy_zh_cost: "gemini"
+    leverage: medium
+    notes: "Matches probable school deployment; CRIC is the richest pedagogical Nasa corpus."
+
+  - id: core_lexicon_in_frames
+    priority: 3
+    target_sentences: 2000
+    capability: "core vocabulary embedded in frame sentences (seeds BPE, cuts OOV)"
+    spanish_source: "Living Tongues list / RWC, used IN frame sentences not bare words"
+    proxy_subset: plus_dict_ext
+    proxy_zh_cost: "free (CC-CEDICT/Swadesh) + gemini for frames"
+    leverage: low
+    notes: "Lexical/OOV signal; lower priority because base already vocab-heavy."
+
+# ---------------------------------------------------------------------------
+# METHOD lever (not a translation bucket): back-translation. Consensus #1
+# low-resource lever (Mager et al. 2021 AmericasNLP; Sennrich). Uses MONOLINGUAL
+# Nasa (radio Pa'yumat, Facebook groups, oral transcriptions) -> synthetic
+# parallel. Proxy = monolingual Chinese (abundant). Measured as a METHOD
+# ablation, costs ~no human translation.
+# ---------------------------------------------------------------------------
+methods:
+  - id: backtranslation
+    capability: "amplify scarce parallel data with monolingual target text"
+    real_source: "monolingual Nasa: radio, social media, oral transcriptions"
+    proxy_subset: bt_mono_zh
+    human_cost: "~none (monolingual, not translation)"
+    leverage: high
+
+# ---------------------------------------------------------------------------
+# RULES that matter more than the exact mix.
+# ---------------------------------------------------------------------------
+rules:
+  - "Reserve + quarantine eval_quarantine FIRST; dedup all training buckets against it."
+  - "grammar_morphology_elicitation is the single highest-leverage spend; do not cut it."
+  - "Diversity > volume: enforce diversity_cap_per_domain (<=25%) across the final mix."
+  - "Dedup every commissioned bucket against existing_base (es side) before translating."
+  - "Commission ORDER follows the proxy Stage-B Delta-COMET/Delta-judge ranking;"
+  - "  default prior: general_backbone -> grammar -> health -> conversational -> news/education."
+  - "Over-commission whichever buckets the proxy 'train-on-everything' deficiency"
+  - "  diagnosis (eval_stratified.find_deficiencies) flags as lagging."
+
+# Sum check: 6000+5000+4000+4000+3000+3000+2000 = 27,000 commissioned train
+#           (lexicon already included) + 3,001 eval quarantine (FLORES+).
+#           Headroom to ~30k budget left for proxy-flagged over-commissioning.

@@ -1,0 +1,103 @@
+# Synthetic grammatical-feature-coverage spec  ->  `+grammar_synth` ablation.
+#
+# Goal: a deliberately-constructed En<->Zh corpus that exercises EVERY main grammatical
+# feature of English and Chinese at least `min_examples_per_feature` times, so we can
+# measure how much signal *explicit grammatical coverage* adds versus an equal number of
+# random sentences. Generated via Gemini subagents using the same agent-fulfilled batch
+# queue as `nymt_shared.translate` (no API key required).
+#
+# Generation contract (per feature): a Gemini subagent is asked to produce
+# `min_examples_per_feature` natural sentence PAIRS that each unambiguously exercise the
+# named feature, returning {"id","en","zh","feature"} objects. Pairs are bidirectional at
+# train time like all other data. For the REAL Es<->Nasa target, the analogue spec targets
+# Nasa Yuwe's polysynthetic features (verbal suffix chains, evidentiality, number/person
+# agreement) -- the AVENUE/TMA elicitation philosophy applied to the actual language.
+
+job: grammar_synth
+min_examples_per_feature: 40        # ~40 x ~60 features ~= 2.4k pairs
+target_langs: [en, zh]
+batch_size: 40                      # one feature per batch keeps prompts focused
+
+english_features:
+  tense_aspect:
+    - simple_present
+    - simple_past
+    - simple_future
+    - present_progressive
+    - past_progressive
+    - present_perfect
+    - past_perfect
+    - present_perfect_progressive
+    - future_perfect
+  mood_modality:
+    - can_could_ability
+    - may_might_permission_possibility
+    - must_have_to_obligation
+    - should_advice
+    - would_conditional
+  clause_structure:
+    - zero_conditional
+    - first_conditional
+    - second_conditional
+    - third_conditional
+    - relative_clause_subject
+    - relative_clause_object
+    - reported_speech
+    - subordinate_because_although
+  noun_phrase:
+    - definite_vs_indefinite_article
+    - zero_article_generic
+    - plural_morphology
+    - possessive_s
+    - quantifiers_some_any_much_many
+    - comparative_adjective
+    - superlative_adjective
+  voice_questions:
+    - passive_present
+    - passive_past
+    - passive_with_by_agent
+    - polar_question
+    - wh_question
+    - subject_aux_inversion
+    - tag_question
+  verb_patterns:
+    - gerund_vs_infinitive
+    - phrasal_verb_separable
+    - phrasal_verb_inseparable
+    - negation_not
+    - negation_no_none_never
+    - there_is_there_are
+
+chinese_features:
+  aspect_modality:
+    - perfective_le            # 了 (completed action)
+    - durative_zhe             # 着 (ongoing state)
+    - experiential_guo         # 过 (have-ever experienced)
+    - change_of_state_le2      # 了2 (sentence-final, new situation)
+    - progressive_zai          # 在 / 正在
+    - modal_neng_keyi_hui      # 能/可以/会
+  argument_structure:
+    - ba_construction          # 把 (object-fronting / disposal)
+    - bei_passive              # 被 (passive)
+    - topic_comment            # topic-prominent ordering
+    - serial_verb              # 连动 serial-verb construction
+    - resultative_complement   # V + 完/好/到/见
+    - directional_complement   # V + 上/下/进/出/来/去
+  noun_classifier:
+    - measure_word_classifier  # 个/本/只/张 ... + noun
+    - de_attributive           # 的 (modifier + head)
+    - de_complement_degree     # 得 (degree/manner complement)
+    - di_adverbial             # 地 (adverbial marker)
+    - demonstrative_zhe_na     # 这/那 + classifier
+  clause_question:
+    - shi_de_cleft             # 是...的 (focus on time/manner/agent)
+    - comparative_bi           # 比 comparison
+    - polar_ma                 # 吗 yes/no question
+    - a_not_a_question         # A不A question form
+    - rhetorical_ne            # 呢 follow-up question
+    - conditional_ruguo_jiu    # 如果...就
+    - because_yinwei_suoyi     # 因为...所以
+  time_negation:
+    - time_via_adverb          # tense-less: 昨天/明天/已经 mark time
+    - negation_bu              # 不 (general negation)
+    - negation_mei             # 没/没有 (perfective / existential negation)

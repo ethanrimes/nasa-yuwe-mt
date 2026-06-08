@@ -1,0 +1,360 @@
+{
+  "corpus": [
+    {
+      "tier": "T10k",
+      "direction": "en2es",
+      "domain": "out",
+      "bleu": 5.97,
+      "chrf": 31.09,
+      "chrf_pp": 28.95,
+      "word_recall": 19.5
+    },
+    {
+      "tier": "T10k",
+      "direction": "es2en",
+      "domain": "out",
+      "bleu": 16.81,
+      "chrf": 45.21,
+      "chrf_pp": 43.09,
+      "word_recall": 44.1
+    },
+    {
+      "tier": "T50k",
+      "direction": "en2es",
+      "domain": "out",
+      "bleu": 6.5,
+      "chrf": 30.72,
+      "chrf_pp": 28.51,
+      "word_recall": 18.9
+    },
+    {
+      "tier": "T50k",
+      "direction": "es2en",
+      "domain": "out",
+      "bleu": 17.2,
+      "chrf": 46.35,
+      "chrf_pp": 44.21,
+      "word_recall": 45.8
+    },
+    {
+      "tier": "T100k",
+      "direction": "en2es",
+      "domain": "out",
+      "bleu": 6.64,
+      "chrf": 31.14,
+      "chrf_pp": 28.86,
+      "word_recall": 19.3
+    },
+    {
+      "tier": "T100k",
+      "direction": "es2en",
+      "domain": "out",
+      "bleu": 17.49,
+      "chrf": 46.56,
+      "chrf_pp": 44.4,
+      "word_recall": 45.9
+    },
+    {
+      "tier": "T500k",
+      "direction": "en2es",
+      "domain": "out",
+      "bleu": 6.44,
+      "chrf": 30.74,
+      "chrf_pp": 28.48,
+      "word_recall": 19.0
+    },
+    {
+      "tier": "T500k",
+      "direction": "es2en",
+      "domain": "out",
+      "bleu": 17.71,
+      "chrf": 46.54,
+      "chrf_pp": 44.35,
+      "word_recall": 45.5
+    },
+    {
+      "tier": "T1M",
+      "direction": "en2es",
+      "domain": "out",
+      "bleu": 6.39,
+      "chrf": 30.43,
+      "chrf_pp": 28.15,
+      "word_recall": 19.3
+    },
+    {
+      "tier": "T1M",
+      "direction": "es2en",
+      "domain": "out",
+      "bleu": 17.53,
+      "chrf": 45.93,
+      "chrf_pp": 43.83,
+      "word_recall": 45.3
+    }
+  ],
+  "agreement": {
+    "bleu_vs_chrf": {
+      "pearson": 0.7889117371826413,
+      "spearman": 0.8270979392293375
+    },
+    "bleu_vs_wordrecall": {
+      "pearson": 0.6919556460495782,
+      "spearman": 0.7594793188332076
+    },
+    "chrf_vs_wordrecall": {
+      "pearson": 0.866995886250823,
+      "spearman": 0.8653619285950902
+    },
+    "n_sentences": 920
+  },
+  "single_ref": {
+    "en2es": {
+      "adequate_low_bleu": 0,
+      "total": 460,
+      "examples": [],
+      "pct_adequate_low_bleu": 0.0
+    },
+    "es2en": {
+      "adequate_low_bleu": 14,
+      "total": 460,
+      "examples": [
+        {
+          "tier": "T10k",
+          "src": "Lo único que le digo a la gente es que ustedes nos tratan igual que nosotros los tratamos a ustedes.",
+          "ref": "All I say to people is you treat us the way we treat you.",
+          "hyp": "The only thing I can say to the people is that we treat them as we treat ourselves.",
+          "sent_bleu": 8.0,
+          "sent_chrf": 39.1,
+          "word_recall": 75.0
+        },
+        {
+          "tier": "T10k",
+          "src": "Fue destruida y reconstruida por los portugueses con el nombre de Casa Branca, pero en 1755 la abandonaron después del acaecimiento de un terremoto.",
+          "ref": "The Portuguese destroyed it and rebuilt it under the name Casa Branca, only to abandon it after an earthquake in 1755.",
+          "hyp": "1755, the house was destroyed and rebuilt by the Portuguese under the name of \"Casa Branca\", but in 1755 it was abandoned after the earthquake.",
+          "sent_bleu": 8.8,
+          "sent_chrf": 61.0,
+          "word_recall": 90.9
+        },
+        {
+          "tier": "T50k",
+          "src": "Lo único que le digo a la gente es que ustedes nos tratan igual que nosotros los tratamos a ustedes.",
+          "ref": "All I say to people is you treat us the way we treat you.",
+          "hyp": "The only thing I can say to the people is that we treat them as we treat ourselves.",
+          "sent_bleu": 8.0,
+          "sent_chrf": 39.1,
+          "word_recall": 75.0
+        },
+        {
+          "tier": "T50k",
+          "src": "Atacaba también a cualquier criatura que entrara en el agua: ni siquiera un dinosaurio tan enorme como el T. Rex era una amenaza para él.",
+          "ref": "It also attacked anything that entered the water; even a giant dinosaur such as T. rex would be no match for it.",
+          "hyp": "At the same time, he also attacked any creature that entered the water: no giant dinosaur like the T. Rex was a threat to him.",
+          "sent_bleu": 12.9,
+          "sent_chrf": 51.0,
+          "word_recall": 70.0
+        },
+        {
+          "tier": "T50k",
+          "src": "Dos teorías de muy conocidas son la de la jerarquía de necesidades, de Maslow, y la de los dos factores, de Hertzberg.",
+          "ref": "Two popular content theories are Maslow's Hierarchy of Needs Theory and Hertzberg's Two Factor Theory.",
+          "hyp": "2 theories of widely known are the hierarchy of needs theory, proposed by Maslow, and the two factors theory, proposed by Hertzberg.",
+          "sent_bleu": 2.2,
+          "sent_chrf": 41.8,
+          "word_recall": 70.0
+        },
+        {
+          "tier": "T50k",
+          "src": "Fue destruida y reconstruida por los portugueses con el nombre de Casa Branca, pero en 1755 la abandonaron después del acaecimiento de un terremoto.",
+          "ref": "The Portuguese destroyed it and rebuilt it under the name Casa Branca, only to abandon it after an earthquake in 1755.",
+          "hyp": "1755, the house was destroyed and rebuilt by the Portuguese under the name of Casa Branca, but in 1755 it was abandoned after the earthquake.",
+          "sent_bleu": 11.8,
+          "sent_chrf": 62.1,
+          "word_recall": 90.9
+        },
+        {
+          "tier": "T100k",
+          "src": "Lo único que le digo a la gente es que ustedes nos tratan igual que nosotros los tratamos a ustedes.",
+          "ref": "All I say to people is you treat us the way we treat you.",
+          "hyp": "The only thing I can say to the people is that we treat them as we treat ourselves.",
+          "sent_bleu": 8.0,
+          "sent_chrf": 39.1,
+          "word_recall": 75.0
+        },
+        {
+          "tier": "T100k",
+          "src": "Atacaba también a cualquier criatura que entrara en el agua: ni siquiera un dinosaurio tan enorme como el T. Rex era una amenaza para él.",
+          "ref": "It also attacked anything that entered the water; even a giant dinosaur such as T. rex would be no match for it.",
+          "hyp": "At the same time, he also attacked any creature that entered the water: no giant dinosaur like the T. Rex was a threat to him.",
+          "sent_bleu": 12.9,
+          "sent_chrf": 51.0,
+          "word_recall": 70.0
+        }
+      ],
+      "pct_adequate_low_bleu": 3.0
+    }
+  },
+  "domain_gap": [
+    {
+      "tier": "T10k",
+      "direction": "en2es",
+      "in_bleu": 10.33,
+      "out_bleu": 5.97,
+      "bleu_gap": 4.37,
+      "in_chrf": 33.43,
+      "out_chrf": 31.09,
+      "in_word_recall": 25.7,
+      "out_word_recall": 19.5
+    },
+    {
+      "tier": "T10k",
+      "direction": "es2en",
+      "in_bleu": 23.98,
+      "out_bleu": 16.81,
+      "bleu_gap": 7.17,
+      "in_chrf": 49.1,
+      "out_chrf": 45.21,
+      "in_word_recall": 48.2,
+      "out_word_recall": 44.1
+    },
+    {
+      "tier": "T50k",
+      "direction": "en2es",
+      "in_bleu": 10.06,
+      "out_bleu": 6.5,
+      "bleu_gap": 3.56,
+      "in_chrf": 37.25,
+      "out_chrf": 30.72,
+      "in_word_recall": 25.9,
+      "out_word_recall": 18.9
+    },
+    {
+      "tier": "T50k",
+      "direction": "es2en",
+      "in_bleu": 26.36,
+      "out_bleu": 17.2,
+      "bleu_gap": 9.16,
+      "in_chrf": 51.54,
+      "out_chrf": 46.35,
+      "in_word_recall": 51.8,
+      "out_word_recall": 45.8
+    },
+    {
+      "tier": "T100k",
+      "direction": "en2es",
+      "in_bleu": 8.72,
+      "out_bleu": 6.64,
+      "bleu_gap": 2.08,
+      "in_chrf": 33.32,
+      "out_chrf": 31.14,
+      "in_word_recall": 27.1,
+      "out_word_recall": 19.3
+    },
+    {
+      "tier": "T100k",
+      "direction": "es2en",
+      "in_bleu": 24.02,
+      "out_bleu": 17.49,
+      "bleu_gap": 6.52,
+      "in_chrf": 51.31,
+      "out_chrf": 46.56,
+      "in_word_recall": 53.2,
+      "out_word_recall": 45.9
+    },
+    {
+      "tier": "T500k",
+      "direction": "en2es",
+      "in_bleu": 8.45,
+      "out_bleu": 6.44,
+      "bleu_gap": 2.01,
+      "in_chrf": 32.25,
+      "out_chrf": 30.74,
+      "in_word_recall": 21.8,
+      "out_word_recall": 19.0
+    },
+    {
+      "tier": "T500k",
+      "direction": "es2en",
+      "in_bleu": 22.05,
+      "out_bleu": 17.71,
+      "bleu_gap": 4.33,
+      "in_chrf": 46.35,
+      "out_chrf": 46.54,
+      "in_word_recall": 45.6,
+      "out_word_recall": 45.5
+    },
+    {
+      "tier": "T1M",
+      "direction": "en2es",
+      "in_bleu": 9.74,
+      "out_bleu": 6.39,
+      "bleu_gap": 3.35,
+      "in_chrf": 34.9,
+      "out_chrf": 30.43,
+      "in_word_recall": 23.6,
+      "out_word_recall": 19.3
+    },
+    {
+      "tier": "T1M",
+      "direction": "es2en",
+      "in_bleu": 18.15,
+      "out_bleu": 17.53,
+      "bleu_gap": 0.62,
+      "in_chrf": 43.42,
+      "out_chrf": 45.93,
+      "in_word_recall": 32.1,
+      "out_word_recall": 45.3
+    }
+  ],
+  "asymmetry": [
+    {
+      "tier": "T10k",
+      "en2es_bleu": 5.97,
+      "es2en_bleu": 16.81,
+      "bleu_ratio_es2en_over_en2es": 2.82,
+      "en2es_word_recall": 19.5,
+      "es2en_word_recall": 44.1,
+      "en2es_chrf": 31.09,
+      "es2en_chrf": 45.21
+    },
+    {
+      "tier": "T50k",
+      "en2es_bleu": 6.5,
+      "es2en_bleu": 17.2,
+      "bleu_ratio_es2en_over_en2es": 2.65,
+      "en2es_word_recall": 18.9,
+      "es2en_word_recall": 45.8,
+      "en2es_chrf": 30.72,
+      "es2en_chrf": 46.35
+    },
+    {
+      "tier": "T100k",
+      "en2es_bleu": 6.64,
+      "es2en_bleu": 17.49,
+      "bleu_ratio_es2en_over_en2es": 2.63,
+      "en2es_word_recall": 19.3,
+      "es2en_word_recall": 45.9,
+      "en2es_chrf": 31.14,
+      "es2en_chrf": 46.56
+    },
+    {
+      "tier": "T500k",
+      "en2es_bleu": 6.44,
+      "es2en_bleu": 17.71,
+      "bleu_ratio_es2en_over_en2es": 2.75,
+      "en2es_word_recall": 19.0,
+      "es2en_word_recall": 45.5,
+      "en2es_chrf": 30.74,
+      "es2en_chrf": 46.54
+    },
+    {
+      "tier": "T1M",
+      "en2es_bleu": 6.39,
+      "es2en_bleu": 17.53,
+      "bleu_ratio_es2en_over_en2es": 2.74,
+      "en2es_word_recall": 19.3,
+      "es2en_word_recall": 45.3,
+      "en2es_chrf": 30.43,
+      "es2en_chrf": 45.93
+    }
+  ]
+}

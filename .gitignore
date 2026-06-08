@@ -1,0 +1,77 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+*.env
+!.env.example
+.python-version
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Large artifacts (NEVER commit) ----
+# Model checkpoints / weights
+**/checkpoints/
+**/models/runs/
+**/runs/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+*.gguf
+
+# Datasets / interim / raw downloads
+**/data/raw/
+**/data/interim/
+**/data/processed/
+**/data/splits/
+*.jsonl
+*.parquet
+*.tsv.gz
+*.txt.zip
+*.tar.gz
+*.tgz
+!**/configs/**/*.jsonl
+
+# Experiment results (synced to Blob instead)
+english-spanish-mt-experiment/experiment-results/
+english-spanish-mt-experiment/checkpoints/
+english-spanish-mt-experiment/data/
+
+# Reconstructed data lands locally then goes to Blob (whole tree; never commit data)
+**/data-en-zh/
+
+# ---- External cloned corpora (raw upstream data, not ours to commit) ----
+_external_repos/
+
+# ---- Logs / tracking ----
+*.log
+wandb/
+mlruns/
+outputs/
+tb_logs/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- Secrets / cloud ----
+*.pem
+*.key
+azure-credentials.json
+.azure/
+
+# ---- H100 runtime artifacts (sensitive: contain public IPs / PIDs) ----
+.h100_state.json
+.myip.txt
+h100_run.pid
+.cloud-init.yaml

@@ -1,0 +1,27 @@
+# NLLB-200 3.3B — Spanish<->Nasa-Yuwe fine-tune.
+# Capped at 2 epochs (see nllb.yaml) — it is the slowest per-example, so this keeps
+# it inside the shared H100 budget. Smaller per-device batch + more accumulation to
+# fit its ~44 GB training footprint when packed with other runs.
+model_key: nllb-3.3b
+hf_id: facebook/nllb-200-3.3B
+
+training:
+  num_train_epochs: 2
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 8
+  learning_rate: 1.5e-5
+  weight_decay: 0.0
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+  bf16: true
+  gradient_checkpointing: true
+  optim: adamw_torch
+  seed: 17
+  max_source_len: 200
+  max_target_len: 200
+  logging_steps: 25
+  eval_steps: 750
+  save_steps: 750
+  save_total_limit: 2
+  dataloader_num_workers: 2

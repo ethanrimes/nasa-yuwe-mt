@@ -1,0 +1,21 @@
+{
+  "checkpoint": "checkpoints/T100000/checkpoint-10500",
+  "eval_set": "flores200_devtest",
+  "num_beams": 4,
+  "results": {
+    "en2es": {
+      "bleu": 2.47448817771401,
+      "chrf": 23.47259532809608,
+      "chrf_pp": 19.767337942525213,
+      "comet": null,
+      "n": 1012
+    },
+    "es2en": {
+      "bleu": 16.42332561533111,
+      "chrf": 42.32477590098603,
+      "chrf_pp": 40.20611501845651,
+      "comet": null,
+      "n": 1012
+    }
+  }
+}

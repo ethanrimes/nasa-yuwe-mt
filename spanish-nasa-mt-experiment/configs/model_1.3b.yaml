@@ -1,0 +1,24 @@
+# NLLB-200 1.3B — Spanish<->Nasa-Yuwe fine-tune.
+model_key: nllb-1.3b
+hf_id: facebook/nllb-200-1.3B
+
+training:
+  num_train_epochs: 3
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-5
+  weight_decay: 0.0
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+  bf16: true
+  gradient_checkpointing: true
+  optim: adamw_torch
+  seed: 17
+  max_source_len: 200
+  max_target_len: 200
+  logging_steps: 25
+  eval_steps: 500
+  save_steps: 500
+  save_total_limit: 2
+  dataloader_num_workers: 2

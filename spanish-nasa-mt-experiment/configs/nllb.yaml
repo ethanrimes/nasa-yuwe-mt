@@ -1,0 +1,28 @@
+# NLLB es<->nasa fine-tune matrix.
+#
+# These runs are packed onto the SAME H100 as the En<->Zh ablation matrix to fill
+# spare VRAM. Each entry names a model size + its per-model config; the on-VM runner
+# turns this into schedule.Run objects (snmt.runs.load_nllb_runs) and packs them
+# into the same VRAM-bounded waves as the En<->Zh runs.
+#
+# Epochs are tuned per size so the big 3.3B stays inside the GPU budget: the 600M
+# and 1.3B get 3 epochs; the 3.3B is capped at 2 (it is ~4x slower per example).
+
+epochs: 3              # default; per-run override below
+effective_batch: 64
+
+runs:
+  - id: nllb-600m-es-nasa
+    model_key: nllb-600m
+    model_config: configs/model_600m.yaml
+    epochs: 3
+
+  - id: nllb-1.3b-es-nasa
+    model_key: nllb-1.3b
+    model_config: configs/model_1.3b.yaml
+    epochs: 3
+
+  - id: nllb-3.3b-es-nasa
+    model_key: nllb-3.3b
+    model_config: configs/model_3.3b.yaml
+    epochs: 2

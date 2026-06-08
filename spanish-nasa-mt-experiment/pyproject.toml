@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snmt"
+version = "0.1.0"
+description = "Spanish<->Nasa-Yuwe NLLB fine-tuning: encoder-decoder MT on the REAL parallel data, co-run on the same H100 as the En-Zh proxy matrix to fill spare GPU capacity."
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ethan Kallett" }]
+
+# NOTE: torch / transformers / accelerate are heavy and are only needed at *train*
+# time on the GPU VM (where they are already present in the Ubuntu-HPC image /
+# installed by the en-zh experiment's own deps). They are declared in the optional
+# `gpu` extra so that local dry-runs, `plan`, data-prep, and the pure-logic unit
+# tests can `pip install -e .` without pulling CUDA wheels.
+dependencies = [
+    "pyarrow>=15.0.0",
+    "pyyaml>=6.0.2",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+gpu = [
+    "torch>=2.3.0",
+    "transformers>=4.46.0",
+    "accelerate>=1.0.0",
+    "datasets>=3.0.0",
+    "sentencepiece>=0.2.0",
+    "sacrebleu>=2.4.0",
+]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra -q"

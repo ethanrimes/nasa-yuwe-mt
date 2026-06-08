@@ -1,0 +1,9 @@
+# Normalize line endings; keep shell/text LF where it matters.
+* text=auto
+*.py text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.ps1 text eol=crlf

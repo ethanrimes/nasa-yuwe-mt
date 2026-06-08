@@ -1,0 +1,217 @@
+# Ablation matrix for the English<->Chinese proxy experiment.
+#
+# Each run trains ONE SmolLM2 size on ONE data subset of the reconstructed
+# En-Zh dataset (the row-for-row mirror of the Nasa-Spanish data). The two core
+# data ablations are the two `level` subsets the user asked for:
+#
+#   * sentence_only        — 16,446 pairs (level == sentence)
+#   * sentence_plus_vocab  — 24,229 pairs (sentence + vocabulary)
+#
+# `pairs` is the reconstructed row count; bidirectional expansion doubles the
+# training examples. The scheduler (nymt_shared.schedule) uses model_key + pairs
+# to estimate VRAM + duration and pack runs concurrently on one H100. The VM
+# runner additionally starts an NVIDIA MPS daemon so packed runs share SMs
+# spatially (not by context-switching), and gives each run an SM budget weighted
+# by model size.
+#
+# extended_model_dir / model_config point at the per-size vocab-extended model
+# built on the VM by 04_extend_model.py before training.
+
+usable_vram_gb: 72          # leave 8 GB headroom on the 80 GB H100
+max_concurrent: 6
+epochs: 3
+effective_batch: 64
+
+subsets:
+  sentence_only:
+    file: data-en-zh/subsets/sentence_only.jsonl
+    pairs: 16446
+  sentence_plus_vocab:
+    file: data-en-zh/subsets/sentence_plus_vocab.jsonl
+    pairs: 24229
+  # `everything` = sentence_plus_vocab + every built proxy candidate stacked in
+  # (the upper-bound proxy model). Trained ONCE to drive the deficiency-diagnosis
+  # workflow (eval_stratified.py): train on everything, stratify eval by topic/
+  # length/feature/direction, find the strata that lag -> the capabilities NO
+  # current source covers -> what NEW Nasa data to commission. COMPLEMENTARY to
+  # the Stage-B per-source probes (which give per-source attribution). `pairs` is
+  # filled by the builder once all candidate proxies exist; FLORES+/NTREX excluded.
+  everything:
+    file: data-en-zh/subsets/everything.jsonl
+    pairs: null      # set by 02_build_subsets.py after candidate proxies are built
+
+# Core matrix = {360m, 1.7b} x {sentence_only, sentence_plus_vocab} = 4 runs.
+runs:
+  - id: 360m-sentence
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: sentence_only
+  - id: 360m-sentvocab
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: sentence_plus_vocab
+  - id: 1p7b-sentence
+    model_key: "1.7b"
+    model_config: configs/model_1.7b.yaml
+    subset: sentence_only
+  - id: 1p7b-sentvocab
+    model_key: "1.7b"
+    model_config: configs/model_1.7b.yaml
+    subset: sentence_plus_vocab
+
+# ---------------------------------------------------------------------------
+# Headline "train-on-everything" run (documentation-config; promote into `runs:`
+# once data-en-zh/subsets/everything.jsonl is built). This is the user's primary
+# diagnosis workflow: one upper-bound model trained on ALL proxy data, then
+# eval_stratified.evaluate_checkpoints_over_time() watches each capability's
+# learning curve and find_deficiencies() flags the strata no current source
+# covers -> what NEW Nasa data to commission (see configs/commission_spec.yaml).
+headline_runs:
+  - id: 360m-everything
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: everything
+    diagnose: true            # run stratified per-checkpoint deficiency eval
+  - id: 1p7b-everything
+    model_key: "1.7b"
+    model_config: configs/model_1.7b.yaml
+    subset: everything
+    diagnose: true
+
+# ---------------------------------------------------------------------------
+# Stage B — checkpoint-resume "signal probe" ablations.
+#
+# Methodology (see ABLATION_PLAN.md S2 + S6): Stage A trains the four core runs
+# above FROM SCRATCH. The best `sentence_plus_vocab` checkpoint per size is then
+# WARM-STARTED and one candidate proxy dataset (or a combo) is stacked on top of
+# the existing sentence+vocab data. Because we resume rather than retrain, each
+# probe is cheap, and the marginal delta (dBLEU / dchrF++ / dCOMET / djudge,
+# BOTH directions) directly ranks which ~30-40k sentences are worth commissioning
+# for real human Nasa Yuwe translation.
+#
+# The on-VM runner only executes `runs:` above. Everything below is config-as-
+# documentation: it is consumed by the analysis/promotion tooling and is turned
+# into live runs by copying the chosen entries into `runs:` (with `resume_from`)
+# once the proxy data for each candidate has been built + synced.
+stage_b:
+  base_subset: sentence_plus_vocab     # the non-negotiable existing data
+  resume_from: best                    # best Stage-A sentvocab checkpoint per size
+  gate_metric: delta_comet_plus_judge  # promote only if BOTH directions improve
+  default_size: "360m"                 # probes run cheap on 360M...
+  confirm_size: "1.7b"                 # ...top-ranked candidate(s) re-confirmed on 1.7B
+
+# Proxy subsets stacked on sentence_plus_vocab. `add_pairs` is the candidate's own
+# reconstructed En-Zh pair count; `pairs` is the resulting stacked train size.
+# `availability` records whether the En-Zh proxy side is already public or must be
+# produced by our Gemini batch queue (see ABLATION_PLAN.md S6.1).
+extended_subsets:
+  plus_seed:            { add_pairs: 6193, pairs: 30422, source: "OLDI/NLLB-Seed",            availability: "en public; zh via gemini" }
+  plus_morph:           { add_pairs: 3500, pairs: 27729, source: "AVENUE+Dahl-TMA+templated", availability: "generate; zh via gemini" }
+  plus_grammar_phrases: { add_pairs: 1959, pairs: 26188, source: "Living Tongues phrases",     availability: "en public; zh via gemini" }
+  plus_grammar_synth:   { add_pairs: 2400, pairs: 26629, source: "synthetic grammar coverage", availability: "generate both via gemini (configs/grammar_coverage_spec.yaml)" }
+  plus_health:          { add_pairs: 3071, pairs: 27300, source: "TICO-19",                    availability: "en+zh public (no gemini)" }
+  plus_domain:          { add_pairs: 5000, pairs: 29229, source: "Gamayun/NLLB-MultiDomain",   availability: "en public; zh via gemini" }
+  plus_dict_ext:        { add_pairs: 3000, pairs: 27229, source: "CC-CEDICT+Swadesh+RWC",       availability: "en+zh public dict (no gemini)" }
+
+# Each probe = warm-start best sentvocab checkpoint, train the stacked subset.
+# 360M for all; `plus_seed` (top a-priori pick) also confirmed on 1.7B. The final
+# `plus_best_combo` is assembled AFTER the single-source probes rank the winners.
+extended_runs:
+  - id: 360m-plus-seed
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_seed
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 1p7b-plus-seed
+    model_key: "1.7b"
+    model_config: configs/model_1.7b.yaml
+    subset: plus_seed
+    stage: b
+    resume_from: best:1.7b:sentence_plus_vocab
+  - id: 360m-plus-morph
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_morph
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-grammar-phrases
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_grammar_phrases
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-grammar-synth
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_grammar_synth
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-health
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_health
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-domain
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_domain
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-dict-ext
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_dict_ext
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+  - id: 360m-plus-best-combo
+    model_key: "360m"
+    model_config: configs/model_360m.yaml
+    subset: plus_best_combo      # defined after single-source probes rank winners
+    stage: b
+    resume_from: best:360m:sentence_plus_vocab
+
+# ---------------------------------------------------------------------------
+# METHOD ablations (not new translation buckets). Back-translation is the
+# consensus #1 low-resource lever: monolingual TARGET text -> synthetic parallel.
+# Proxy uses abundant monolingual Chinese; the real Nasa analogue uses monolingual
+# Nasa (radio Pa'yumat, social media, oral transcriptions) and costs ~no human
+# translation. Warm-started from the best sentvocab checkpoint, like Stage B.
+method_ablations:
+  bt_mono_zh:
+    method: backtranslation
+    add_pairs: 8000                # synthetic; tagged back-translation
+    source: "monolingual zh (proxy) / monolingual Nasa (real)"
+    human_cost: "~none (monolingual)"
+  runs:
+    - id: 360m-plus-backtranslation
+      model_key: "360m"
+      model_config: configs/model_360m.yaml
+      subset: bt_mono_zh
+      stage: b
+      resume_from: best:360m:sentence_plus_vocab
+
+# Evaluation runs OFF the GPU after each training run (so it never holds the H100):
+#   * deterministic: BLEU + chrF++ + COMET + En-perplexity probe, BOTH directions
+#     (already wired in src/ecmt/training/eval.py against held-out FLORES+/XNLI).
+#   * stratified: eval_stratified.py groups per-segment scores by topic/length/
+#     feature/direction -> find_deficiencies() flags lagging strata (deficiency
+#     diagnosis); evaluate_checkpoints_over_time() yields per-capability learning
+#     curves. Driven by the `everything` headline run (diagnose: true).
+#   * llm_judge: nymt_shared.llm_judge score + pairwise on the same held-out set
+#     (agent-fulfilled queue; gate metric = delta_comet_plus_judge both directions).
+# FLORES+ and NTREX-128 are EVAL-ONLY and must never appear in any training subset.
+eval:
+  deterministic: [bleu, chrf++, comet, en_perplexity]
+  stratified: [topic, length, feature, direction]   # eval_stratified.py
+  llm_judge: [score, pairwise]
+  directions: [en2zh, zh2en]
+  held_out: [flores_plus, ntrex128, xnli]            # ntrex128 = news-domain gold (eval-only)
+  train_on_flores: false
+  train_on_ntrex: false
+
+# Foundational human-translation commission blueprint (the real Es->Nasa target):
+# what to have humans translate for well-rounded capability. The Stage-B proxy
+# probes above rank these buckets by signal-per-sentence before any human spend.
+commission_spec: configs/commission_spec.yaml

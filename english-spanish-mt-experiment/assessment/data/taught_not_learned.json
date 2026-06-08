@@ -1,0 +1,867 @@
+{
+  "params": {
+    "taught_freq_threshold": 100,
+    "min_tf_occurrences": 4,
+    "not_learned_rate": 0.0,
+    "weak_rate": 0.1,
+    "note": "TF = teacher forcing (gold source + gold prefix). recall_rate is fraction of reference occurrences where the model's top-1 was the gold word."
+  },
+  "tiers": {
+    "T10k": {
+      "step": 600,
+      "pairs": 10000,
+      "directions": {
+        "en2es": {
+          "n_taught_words_evaluated": 23,
+          "n_taught_not_learned": 8,
+          "n_taught_weak": 8,
+          "pct_taught_not_learned": 34.8,
+          "top_taught_not_learned": [
+            {
+              "word": "entre",
+              "train_freq": 309,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 244,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 204,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 176,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sí",
+              "train_freq": 175,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 162,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 162,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 102,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "entre",
+              "train_freq": 309,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 244,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 204,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 176,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sí",
+              "train_freq": 175,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 162,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 162,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 102,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        },
+        "es2en": {
+          "n_taught_words_evaluated": 18,
+          "n_taught_not_learned": 0,
+          "n_taught_weak": 0,
+          "pct_taught_not_learned": 0.0,
+          "top_taught_not_learned": [],
+          "top_weak": []
+        }
+      }
+    },
+    "T50k": {
+      "step": 7250,
+      "pairs": 50000,
+      "directions": {
+        "en2es": {
+          "n_taught_words_evaluated": 25,
+          "n_taught_not_learned": 8,
+          "n_taught_weak": 8,
+          "pct_taught_not_learned": 32.0,
+          "top_taught_not_learned": [
+            {
+              "word": "entre",
+              "train_freq": 1557,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 1184,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 979,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 825,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 803,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 633,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 479,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 296,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "entre",
+              "train_freq": 1557,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 1184,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 979,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 825,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 803,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 633,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 479,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 296,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        },
+        "es2en": {
+          "n_taught_words_evaluated": 25,
+          "n_taught_not_learned": 2,
+          "n_taught_weak": 2,
+          "pct_taught_not_learned": 8.0,
+          "top_taught_not_learned": [
+            {
+              "word": "large",
+              "train_freq": 320,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 205,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "large",
+              "train_freq": 320,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 205,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        }
+      }
+    },
+    "T100k": {
+      "step": 10500,
+      "pairs": 100000,
+      "directions": {
+        "en2es": {
+          "n_taught_words_evaluated": 25,
+          "n_taught_not_learned": 8,
+          "n_taught_weak": 8,
+          "pct_taught_not_learned": 32.0,
+          "top_taught_not_learned": [
+            {
+              "word": "entre",
+              "train_freq": 3169,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 2496,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 2078,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 1698,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 1531,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 1335,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 974,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 721,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "entre",
+              "train_freq": 3169,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 2496,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 2078,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 1698,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 1531,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 1335,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 974,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 721,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        },
+        "es2en": {
+          "n_taught_words_evaluated": 26,
+          "n_taught_not_learned": 3,
+          "n_taught_weak": 3,
+          "pct_taught_not_learned": 11.5,
+          "top_taught_not_learned": [
+            {
+              "word": "large",
+              "train_freq": 674,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 396,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usually",
+              "train_freq": 163,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "large",
+              "train_freq": 674,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 396,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usually",
+              "train_freq": 163,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        }
+      }
+    },
+    "T500k": {
+      "step": 30000,
+      "pairs": 500000,
+      "directions": {
+        "en2es": {
+          "n_taught_words_evaluated": 26,
+          "n_taught_not_learned": 9,
+          "n_taught_weak": 9,
+          "pct_taught_not_learned": 34.6,
+          "top_taught_not_learned": [
+            {
+              "word": "entre",
+              "train_freq": 14402,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 10957,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 8826,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 7123,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 6619,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 5762,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 5675,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 4056,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "suelen",
+              "train_freq": 310,
+              "tf_occ": 6,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "entre",
+              "train_freq": 14402,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 10957,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 8826,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 7123,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 6619,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 5762,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 5675,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 4056,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "suelen",
+              "train_freq": 310,
+              "tf_occ": 6,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        },
+        "es2en": {
+          "n_taught_words_evaluated": 26,
+          "n_taught_not_learned": 3,
+          "n_taught_weak": 3,
+          "pct_taught_not_learned": 11.5,
+          "top_taught_not_learned": [
+            {
+              "word": "large",
+              "train_freq": 2984,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 1841,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usually",
+              "train_freq": 685,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "large",
+              "train_freq": 2984,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 1841,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usually",
+              "train_freq": 685,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        }
+      }
+    },
+    "T1M": {
+      "step": 36000,
+      "pairs": 1000000,
+      "directions": {
+        "en2es": {
+          "n_taught_words_evaluated": 26,
+          "n_taught_not_learned": 9,
+          "n_taught_weak": 9,
+          "pct_taught_not_learned": 34.6,
+          "top_taught_not_learned": [
+            {
+              "word": "entre",
+              "train_freq": 24583,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 18586,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 14941,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 13057,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 11747,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 11493,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 10246,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 6600,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "suelen",
+              "train_freq": 492,
+              "tf_occ": 6,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "entre",
+              "train_freq": 24583,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "parte",
+              "train_freq": 18586,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "gran",
+              "train_freq": 14941,
+              "tf_occ": 8,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "usted",
+              "train_freq": 13057,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "hoy",
+              "train_freq": 11747,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "sea",
+              "train_freq": 11493,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "ni",
+              "train_freq": 10246,
+              "tf_occ": 5,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "aún",
+              "train_freq": 6600,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "suelen",
+              "train_freq": 492,
+              "tf_occ": 6,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        },
+        "es2en": {
+          "n_taught_words_evaluated": 26,
+          "n_taught_not_learned": 2,
+          "n_taught_weak": 2,
+          "pct_taught_not_learned": 7.7,
+          "top_taught_not_learned": [
+            {
+              "word": "large",
+              "train_freq": 5034,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 3353,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ],
+          "top_weak": [
+            {
+              "word": "large",
+              "train_freq": 5034,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            },
+            {
+              "word": "several",
+              "train_freq": 3353,
+              "tf_occ": 4,
+              "tf_recalled": 0,
+              "recall_rate": 0.0
+            }
+          ]
+        }
+      }
+    }
+  }
+}

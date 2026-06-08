@@ -1,0 +1,33 @@
+# Base model configuration — SmolLM2-1.7B variant.
+# Identical recipe to configs/model.yaml (360M); only the checkpoint changes.
+# Used for the model-capacity size-sweep (see assessment/REPORT.md): does a
+# ~4.7x larger model lift the recall plateau that 360M hits regardless of data?
+#
+# Intended compute: 1x NVIDIA H100 (94GB NVL) on Azure ML, westus2.
+# At seq=384 the full fine-tune (bf16 + AdamW fp32 states + grad checkpointing)
+# needs ~25-30GB, so a single H100 fits effective batch 32 comfortably.
+
+model:
+  hf_id: HuggingFaceTB/SmolLM2-1.7B
+  revision: main
+  trust_remote_code: false
+  dtype: bfloat16            # H100/A100 support bf16; falls back to fp16 elsewhere
+  attn_implementation: sdpa  # works on PyTorch >= 2.1
+  gradient_checkpointing: true
+  # We do NOT extend the tokenizer with Spanish-specific tokens — the 1.7B model
+  # shares SmolLM2's English-trained tokenizer so the comparison to 360M is
+  # apples-to-apples (only parameter count changes).
+  extend_tokenizer_for_spanish: false
+
+# Prompt template applied at training & inference time.
+# Kept byte-for-byte identical to the 360M config so the only independent
+# variable in the size-sweep is model capacity.
+prompt:
+  template: |
+    {src_lang}: {src_text}
+    {tgt_lang}: {tgt_text}
+  src_lang_names:
+    en: "English"
+    es: "Spanish"
+  direction_sampling: balanced   # 50/50 en→es and es→en per epoch
+  mask_loss_on_prompt: true

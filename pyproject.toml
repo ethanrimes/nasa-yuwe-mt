@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nymt-shared"
+version = "0.1.0"
+description = "Shared infra for the Nasa Yuwe MT monorepo: Azure Blob sync, H100 provisioning, snapshot mirroring, Bible fetch, and Gemini-subagent translation driver."
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ethan Kallett" }]
+
+dependencies = [
+    "azure-identity>=1.18.0",
+    "azure-storage-blob>=12.23.0",
+    "requests>=2.32.0",
+    "pyyaml>=6.0.2",
+    "python-dotenv>=1.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.7.0",
+]
+
+[tool.setuptools]
+packages = ["nymt_shared"]
+
+[tool.setuptools.package-dir]
+nymt_shared = "shared"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["shared/tests"]
+addopts = "-ra -q"

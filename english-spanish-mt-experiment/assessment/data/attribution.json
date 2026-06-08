@@ -1,0 +1,149 @@
+{
+  "LOW_freq_threshold": 5,
+  "tiers": {
+    "T10k": {
+      "en2es": {
+        "total_missed_word_tokens": 935,
+        "categories": {
+          "C_capability": 444,
+          "D_decoding": 127,
+          "A_data_gap": 362,
+          "B_forgetting": 2
+        },
+        "category_pct": {
+          "C_capability": 47.5,
+          "D_decoding": 13.6,
+          "A_data_gap": 38.7,
+          "B_forgetting": 0.2
+        }
+      },
+      "es2en": {
+        "total_missed_word_tokens": 555,
+        "categories": {
+          "D_decoding": 106,
+          "A_data_gap": 173,
+          "C_capability": 272,
+          "B_forgetting": 4
+        },
+        "category_pct": {
+          "D_decoding": 19.1,
+          "A_data_gap": 31.2,
+          "C_capability": 49.0,
+          "B_forgetting": 0.7
+        }
+      }
+    },
+    "T50k": {
+      "en2es": {
+        "total_missed_word_tokens": 1187,
+        "categories": {
+          "C_capability": 773,
+          "D_decoding": 192,
+          "A_data_gap": 222
+        },
+        "category_pct": {
+          "C_capability": 65.1,
+          "D_decoding": 16.2,
+          "A_data_gap": 18.7
+        }
+      },
+      "es2en": {
+        "total_missed_word_tokens": 693,
+        "categories": {
+          "C_capability": 440,
+          "D_decoding": 138,
+          "A_data_gap": 115
+        },
+        "category_pct": {
+          "C_capability": 63.5,
+          "D_decoding": 19.9,
+          "A_data_gap": 16.6
+        }
+      }
+    },
+    "T100k": {
+      "en2es": {
+        "total_missed_word_tokens": 1186,
+        "categories": {
+          "C_capability": 832,
+          "A_data_gap": 155,
+          "D_decoding": 199
+        },
+        "category_pct": {
+          "C_capability": 70.2,
+          "A_data_gap": 13.1,
+          "D_decoding": 16.8
+        }
+      },
+      "es2en": {
+        "total_missed_word_tokens": 692,
+        "categories": {
+          "C_capability": 459,
+          "D_decoding": 143,
+          "A_data_gap": 90
+        },
+        "category_pct": {
+          "C_capability": 66.3,
+          "D_decoding": 20.7,
+          "A_data_gap": 13.0
+        }
+      }
+    },
+    "T500k": {
+      "en2es": {
+        "total_missed_word_tokens": 1190,
+        "categories": {
+          "C_capability": 935,
+          "D_decoding": 204,
+          "A_data_gap": 51
+        },
+        "category_pct": {
+          "C_capability": 78.6,
+          "D_decoding": 17.1,
+          "A_data_gap": 4.3
+        }
+      },
+      "es2en": {
+        "total_missed_word_tokens": 697,
+        "categories": {
+          "D_decoding": 160,
+          "C_capability": 502,
+          "A_data_gap": 35
+        },
+        "category_pct": {
+          "D_decoding": 23.0,
+          "C_capability": 72.0,
+          "A_data_gap": 5.0
+        }
+      }
+    },
+    "T1M": {
+      "en2es": {
+        "total_missed_word_tokens": 941,
+        "categories": {
+          "C_capability": 732,
+          "D_decoding": 174,
+          "A_data_gap": 35
+        },
+        "category_pct": {
+          "C_capability": 77.8,
+          "D_decoding": 18.5,
+          "A_data_gap": 3.7
+        }
+      },
+      "es2en": {
+        "total_missed_word_tokens": 551,
+        "categories": {
+          "D_decoding": 134,
+          "C_capability": 399,
+          "A_data_gap": 18
+        },
+        "category_pct": {
+          "D_decoding": 24.3,
+          "C_capability": 72.4,
+          "A_data_gap": 3.3
+        }
+      }
+    }
+  }
+}

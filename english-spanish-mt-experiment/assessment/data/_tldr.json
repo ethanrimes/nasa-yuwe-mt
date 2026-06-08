@@ -1,0 +1,10 @@
+{
+  "bullets": [
+    "No catastrophic forgetting: teacher-forced word recall is flat across every snapshot within each tier (en2es saturates ~0.28, es2en ~0.45), and English-holdout perplexity stays within ~2% of the base model (28.56 -> ~29.2). The models do not overwrite their general English ability or lose earlier-learned vocabulary as training proceeds.",
+    "Flat data scaling: greedy generation BLEU is essentially constant across a 100x data range (en2es ~6-6.6, es2en ~16.8-17.7 from T10k to T1M). Above ~10k pairs, more parallel data is NOT the dominant bottleneck.",
+    "Gaps are capability/decoding-bound, not data-bound: error attribution shows most misses fall on well-attested words the model never recalls (capability ceiling) or recalls under teacher forcing but drops during free generation (decoding), rather than on rare/unseen words (data gap).",
+    "Direct 'taught but not learned' evidence: high-frequency Spanish words (entre 24.6k, parte 18.6k, gran 14.9k, sea, ni training occurrences) are NEVER top-1 under teacher forcing at any tier, and stay 0% even as their training count grows ~100x. More exposure does not fix them and the effect is direction-asymmetric (en2es many, es2en almost none) -- the signature of a model-capacity ceiling, not missing data.",
+    "Direction asymmetry is partly real, partly a metric artifact: es2en (~17 BLEU) far exceeds en2es (~6.5 BLEU greedy). English is the base model's native language (real), and Spanish morphology + single-reference BLEU understate en2es adequacy (artifact).",
+    "BLEU/chrF understate true ability: many sentences with high content-word recall score low single-reference BLEU. chrF and content-word recall track adequacy better than BLEU for this single-reference, morphologically-rich setting; COMET-style semantic scoring is the recommended next step."
+  ]
+}
