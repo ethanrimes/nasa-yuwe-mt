@@ -5,24 +5,58 @@
 # turns this into schedule.Run objects (snmt.runs.load_nllb_runs) and packs them
 # into the same VRAM-bounded waves as the En<->Zh runs.
 #
+# Two axes:
+#   * model size : 600M / 1.3B / 3.3B
+#   * data subset: sentence_only (16,446 pairs) | sentence_plus_vocab (24,229 pairs)
+# => 3 x 2 = 6 runs. The subset selects which per-subset split dir the run trains on
+# (<splits_root>/<subset>); the two subsets mirror the En<->Zh ablation data axis.
+#
 # Epochs are tuned per size so the big 3.3B stays inside the GPU budget: the 600M
 # and 1.3B get 3 epochs; the 3.3B is capped at 2 (it is ~4x slower per example).
+#
+# NOTE: run ids are NEW (…-sent / …-sentvocab) so their Blob checkpoint paths do not
+# clobber the earlier (diverged) single-corpus run outputs.
 
-epochs: 3              # default; per-run override below
+epochs: 3                       # default; per-run override below
 effective_batch: 64
+subset: sentence_plus_vocab     # default; per-run override below
 
 runs:
-  - id: nllb-600m-es-nasa
+  # ---- sentence_only ----
+  - id: nllb-600m-es-nasa-sent
     model_key: nllb-600m
     model_config: configs/model_600m.yaml
     epochs: 3
+    subset: sentence_only
 
-  - id: nllb-1.3b-es-nasa
+  - id: nllb-1.3b-es-nasa-sent
     model_key: nllb-1.3b
     model_config: configs/model_1.3b.yaml
     epochs: 3
+    subset: sentence_only
 
-  - id: nllb-3.3b-es-nasa
+  - id: nllb-3.3b-es-nasa-sent
     model_key: nllb-3.3b
     model_config: configs/model_3.3b.yaml
     epochs: 2
+    subset: sentence_only
+
+  # ---- sentence_plus_vocab ----
+  - id: nllb-600m-es-nasa-sentvocab
+    model_key: nllb-600m
+    model_config: configs/model_600m.yaml
+    epochs: 3
+    subset: sentence_plus_vocab
+
+  - id: nllb-1.3b-es-nasa-sentvocab
+    model_key: nllb-1.3b
+    model_config: configs/model_1.3b.yaml
+    epochs: 3
+    subset: sentence_plus_vocab
+
+  - id: nllb-3.3b-es-nasa-sentvocab
+    model_key: nllb-3.3b
+    model_config: configs/model_3.3b.yaml
+    epochs: 2
+    subset: sentence_plus_vocab
+

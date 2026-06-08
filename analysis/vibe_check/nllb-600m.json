@@ -1,0 +1,56 @@
+{
+  "run": "nllb-600m",
+  "kind": "nllb-seq2seq",
+  "nan_or_inf_param_tensors": 509,
+  "param_tensors": 509,
+  "sets": {
+    "in_domain": {
+      "es2nasa": [
+        {
+          "src": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "ref": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "hyp": ""
+        },
+        {
+          "src": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "ref": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "hyp": ""
+        },
+        {
+          "src": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "ref": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "hyp": ""
+        }
+      ],
+      "nasa2es": [
+        {
+          "src": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "ref": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "hyp": ""
+        },
+        {
+          "src": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "ref": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "hyp": ""
+        },
+        {
+          "src": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "ref": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "hyp": ""
+        }
+      ]
+    },
+    "out_of_domain": {
+      "es2nasa": [
+        {
+          "src": "El gobierno aprobó una nueva ley económica.",
+          "hyp": ""
+        },
+        {
+          "src": "Por favor reinicie el servidor desde la terminal.",
+          "hyp": ""
+        }
+      ]
+    }
+  }
+}

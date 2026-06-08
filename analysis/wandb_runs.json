@@ -1,0 +1,37 @@
+[
+  {
+    "name": "scale-15946-20260608T141021",
+    "id": "b50bbesw",
+    "state": "finished",
+    "url": "https://wandb.ai/ethanrimes-university-of-pennsylvania-athletics/english-chinese-mt/runs/b50bbesw",
+    "eval_loss": 4.3581037521362305
+  },
+  {
+    "name": "scale-23729-20260608T141023",
+    "id": "n2azufc1",
+    "state": "failed",
+    "url": "https://wandb.ai/ethanrimes-university-of-pennsylvania-athletics/english-chinese-mt/runs/n2azufc1",
+    "eval_loss": null
+  },
+  {
+    "name": "scale-15946-20260608T142917",
+    "id": "2e18x6by",
+    "state": "finished",
+    "url": "https://wandb.ai/ethanrimes-university-of-pennsylvania-athletics/english-chinese-mt/runs/2e18x6by",
+    "eval_loss": 6.175930976867676
+  },
+  {
+    "name": "scale-23729-20260608T142917",
+    "id": "wwh0ipgs",
+    "state": "finished",
+    "url": "https://wandb.ai/ethanrimes-university-of-pennsylvania-athletics/english-chinese-mt/runs/wwh0ipgs",
+    "eval_loss": 6.681396007537842
+  },
+  {
+    "name": "scale-23729-20260608T151709",
+    "id": "qbul5h9s",
+    "state": "finished",
+    "url": "https://wandb.ai/ethanrimes-university-of-pennsylvania-athletics/english-chinese-mt/runs/qbul5h9s",
+    "eval_loss": 4.618115425109863
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "run_id": "scale-15946-20260608T142917",
+  "scale": 15946,
+  "n_examples": 31892,
+  "epochs": 3.0,
+  "expected_steps": 1494,
+  "run_dir": "models/runs/360m-sentence/scale-15946-20260608T142917"
+}

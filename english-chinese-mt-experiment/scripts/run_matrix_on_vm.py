@@ -147,11 +147,20 @@ def extend_model(model_config: str, source_parquet: str, zh_vocab: int) -> None:
 
 def mirror_loop(stop: threading.Event, interval: int) -> None:
     """Mirror both the En<->Zh runs and (if present) the NLLB runs to Blob."""
-    targets = [(RUNS_ROOT, config.BLOB_LAYOUT["exp_en_zh"])]
+    targets = []
+    if RUNS_ROOT.exists():
+        targets.append((RUNS_ROOT, config.BLOB_LAYOUT["exp_en_zh"]))
     if NLLB_RUNS_ROOT.exists():
         targets.append((NLLB_RUNS_ROOT, config.BLOB_LAYOUT["exp_es_nasa"]))
     while not stop.is_set():
-        for root, prefix in targets:
+        # Re-discover roots each tick: under --only-nllb the en-zh root never
+        # appears, and the NLLB root may be created slightly after the loop starts.
+        live = []
+        if RUNS_ROOT.exists():
+            live.append((RUNS_ROOT, config.BLOB_LAYOUT["exp_en_zh"]))
+        if NLLB_RUNS_ROOT.exists():
+            live.append((NLLB_RUNS_ROOT, config.BLOB_LAYOUT["exp_es_nasa"]))
+        for root, prefix in (live or targets):
             try:
                 n = blob.mirror_dir(root, prefix, only_new=True, verbose=False)
                 print(f"[mirror] flushed {n} file(s) -> {prefix}", flush=True)
@@ -173,20 +182,28 @@ def prepare_nllb(enabled: bool) -> tuple[list, dict]:
         sys.path.insert(0, str(SNMT_DIR / "src"))
         from snmt import runs as nllb_runs  # noqa: PLC0415
 
-        # Build splits on the VM (downloads the jsonl from Blob; en-zh source isn't synced).
-        sh([PY, str(SNMT_PREPARE), "--out-dir", str(NLLB_SPLITS_DIR)], cwd=str(SNMT_DIR))
-        manifest = json.loads((NLLB_SPLITS_DIR / "splits_manifest.json").read_text(encoding="utf-8"))
-        train_pairs = int(manifest["train_pairs"])
+        # Build BOTH subset split dirs on the VM (downloads the jsonl from Blob;
+        # the en-zh source copy isn't rsynced). Per-subset dirs land under
+        # <NLLB_SPLITS_DIR>/<subset>/ with a top-level subsets_index.json.
+        sh([PY, str(SNMT_PREPARE), "--out-dir", str(NLLB_SPLITS_DIR), "--subset", "all"],
+           cwd=str(SNMT_DIR))
+        index = json.loads(
+            (NLLB_SPLITS_DIR / "subsets_index.json").read_text(encoding="utf-8")
+        )
+        train_pairs_by_subset = {
+            name: int(info["train_pairs"]) for name, info in index["subsets"].items()
+        }
 
         cfg = nllb_runs.load_config()
-        runs = nllb_runs.load_nllb_runs(train_pairs, cfg)
+        runs = nllb_runs.load_nllb_runs(train_pairs_by_subset, cfg)
         launch = nllb_runs.launch_map(
             nllb_runs.run_specs(cfg),
-            splits_dir=NLLB_SPLITS_DIR,
+            splits_root=NLLB_SPLITS_DIR,
             output_root=NLLB_RUNS_ROOT,
             python=PY,
         )
-        print(f"[nllb] prepared {len(runs)} run(s); train_pairs={train_pairs:,}", flush=True)
+        pairs_desc = ", ".join(f"{k}={v:,}" for k, v in sorted(train_pairs_by_subset.items()))
+        print(f"[nllb] prepared {len(runs)} run(s); train_pairs[{pairs_desc}]", flush=True)
         return runs, launch
     except Exception as e:
         print(f"[nllb] WARN: NLLB co-runs disabled ({e}); running En<->Zh only.", flush=True)
@@ -216,13 +233,32 @@ def launch_run(run_cfg: dict, scale: int, extra_env: dict | None = None) -> subp
     env["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
     if extra_env:
         env.update({k: str(v) for k, v in extra_env.items()})
-    cmd = [
-        PY, "scripts/06_train.py",
-        "--scale", str(scale),
-        "--model-config", run_cfg["model_config"],
-        "--override", f"output_root={out_root}",
-        "--yes",
-    ]
+    # Weights & Biases on the headless VM. configs/training.yaml enables wandb, so HF
+    # Trainer calls wandb.init() at on_train_begin. If a WANDB_API_KEY is present in the
+    # environment (propagated from the orchestrator's run_all.sh) we run wandb ONLINE and
+    # pin the project; otherwise we hard-disable it via a real boolean override so the
+    # run can't die with "UsageError: No API key configured". AML behaviour is untouched.
+    # MLflow defaults to a *shared* local store rooted at the common CWD. When two runs are
+    # packed onto the GPU via MPS they start in the same instant and race to create the same
+    # MLflow experiment -> sqlite "OperationalError: database is locked", killing one run at
+    # step 0 (observed for 1.7b-sentvocab). MLflow is only used in AML ("# used in AML
+    # automatically"); on the VM we already have wandb (online) + per-run TensorBoard dirs,
+    # which have no shared state. So hard-disable MLflow on the VM path to make packing safe.
+    overrides = [f"output_root={out_root}", "tracking.mlflow.enabled=false"]
+    if env.get("WANDB_API_KEY", "").strip():
+        env["WANDB_MODE"] = "online"
+        env.setdefault("WANDB_PROJECT", "english-chinese-mt")
+        env.setdefault("WANDB_SILENT", "true")
+        env.pop("WANDB_DISABLED", None)
+    else:
+        env["WANDB_DISABLED"] = "true"
+        env["WANDB_MODE"] = "offline"
+        overrides.append("tracking.wandb.enabled=false")
+    cmd = [PY, "scripts/06_train.py", "--scale", str(scale),
+           "--model-config", run_cfg["model_config"]]
+    for o in overrides:
+        cmd += ["--override", o]
+    cmd.append("--yes")
     pct = env.get("CUDA_MPS_ACTIVE_THREAD_PERCENTAGE", "-")
     print("+", " ".join(cmd), f"(run_id={run_cfg['id']} sm%={pct})", flush=True)
     log = RUNS_ROOT / f"{run_cfg['id']}.log"
@@ -238,40 +274,71 @@ def main() -> int:
     ap.add_argument("--mirror-interval", type=int, default=300)
     ap.add_argument("--no-nllb", action="store_true",
                     help="do NOT pack the es<->nasa NLLB fine-tunes onto the GPU")
+    ap.add_argument("--only-nllb", action="store_true",
+                    help="run ONLY the es<->nasa NLLB fine-tunes (skip the En<->Zh "
+                         "matrix entirely). Used to re-run the NLLB axis without "
+                         "touching the already-complete En<->Zh runs.")
+    ap.add_argument("--only", type=str, default=None,
+                    help="comma-separated en-zh run id(s) to run; others skipped. "
+                         "Re-runs a single failed matrix cell without redoing the rest.")
     args = ap.parse_args()
 
+    if args.only_nllb and args.no_nllb:
+        raise SystemExit("--only-nllb and --no-nllb are mutually exclusive")
+
+    only_nllb = args.only_nllb
     cfg = yaml.safe_load(ABLATIONS.read_text(encoding="utf-8"))
-    run_cfgs = cfg["runs"]
 
-    manifest = prepare_splits()
-    scale_for = {
-        "sentence_only": manifest["scale_sentence_only"],
-        "sentence_plus_vocab": manifest["scale_sentence_plus_vocab"],
-    }
+    if only_nllb:
+        # NLLB-only path: skip all En<->Zh prep (splits, vocab-extend, runs).
+        print("[matrix] --only-nllb: skipping En<->Zh matrix; NLLB es<->nasa only.",
+              flush=True)
+        run_cfgs: list = []
+        runs = []
+        by_id = {}
+        scale_for = {}
+    else:
+        run_cfgs = cfg["runs"]
+        if args.only:
+            wanted = {s.strip() for s in args.only.split(",") if s.strip()}
+            run_cfgs = [r for r in run_cfgs if r["id"] in wanted]
+            if not run_cfgs:
+                raise SystemExit(f"--only {args.only!r} matched no run ids in {[r['id'] for r in cfg['runs']]}")
+            print(f"[matrix] --only filter -> {[r['id'] for r in run_cfgs]}", flush=True)
 
-    # Extend each distinct model size once, learning Chinese BPE from the proxy text.
-    full_parquet = f"data/splits/{manifest['scale_filename_sentence_plus_vocab']}"
-    zh_vocab = int(cfg.get("zh_vocab_size", 8000))
-    for mc in sorted({r["model_config"] for r in run_cfgs}):
-        extend_model(mc, full_parquet, zh_vocab)
+        manifest = prepare_splits()
+        scale_for = {
+            "sentence_only": manifest["scale_sentence_only"],
+            "sentence_plus_vocab": manifest["scale_sentence_plus_vocab"],
+        }
 
-    # Build the En<->Zh schedule.
-    runs = [
-        schedule.Run(
-            run_id=r["id"], model_key=r["model_key"], subset=r["subset"],
-            pairs=int(scale_for[r["subset"]]),
-            epochs=float(cfg.get("epochs", 3)),
-            effective_batch=int(cfg.get("effective_batch", 64)),
-        )
-        for r in run_cfgs
-    ]
-    by_id = {r["id"]: r for r in run_cfgs}
+        # Extend each distinct model size once, learning Chinese BPE from the proxy text.
+        full_parquet = f"data/splits/{manifest['scale_filename_sentence_plus_vocab']}"
+        zh_vocab = int(cfg.get("zh_vocab_size", 8000))
+        for mc in sorted({r["model_config"] for r in run_cfgs}):
+            extend_model(mc, full_parquet, zh_vocab)
+
+        # Build the En<->Zh schedule.
+        runs = [
+            schedule.Run(
+                run_id=r["id"], model_key=r["model_key"], subset=r["subset"],
+                pairs=int(scale_for[r["subset"]]),
+                epochs=float(cfg.get("epochs", 3)),
+                effective_batch=int(cfg.get("effective_batch", 64)),
+            )
+            for r in run_cfgs
+        ]
+        by_id = {r["id"]: r for r in run_cfgs}
 
     # Opportunistically pack the NLLB es<->nasa fine-tunes into the SAME waves to
-    # fill spare H100 VRAM. Robust: if snmt is absent these are empty and the
-    # En<->Zh matrix runs exactly as before.
-    nllb_runs, nllb_launch = prepare_nllb(enabled=not args.no_nllb)
+    # fill spare H100 VRAM (or run them alone under --only-nllb). Robust: if snmt is
+    # absent these are empty and the En<->Zh matrix runs exactly as before.
+    nllb_enabled = not args.no_nllb  # always on under --only-nllb (mutual-excl above)
+    nllb_runs, nllb_launch = prepare_nllb(enabled=nllb_enabled)
     runs = runs + nllb_runs
+
+    if not runs:
+        raise SystemExit("[matrix] no runs to execute (en-zh skipped and no NLLB runs prepared)")
 
     waves = schedule.pack(runs, usable_vram_gb=float(cfg.get("usable_vram_gb", 72)),
                           max_concurrent=int(cfg.get("max_concurrent", 6)))
@@ -320,13 +387,15 @@ def main() -> int:
     finally:
         print("[matrix] final mirror flush ...", flush=True)
         try:
-            blob.mirror_dir(RUNS_ROOT, config.BLOB_LAYOUT["exp_en_zh"], only_new=True, verbose=False)
+            if RUNS_ROOT.exists():
+                blob.mirror_dir(RUNS_ROOT, config.BLOB_LAYOUT["exp_en_zh"], only_new=True, verbose=False)
             if NLLB_RUNS_ROOT.exists():
                 blob.mirror_dir(NLLB_RUNS_ROOT, config.BLOB_LAYOUT["exp_es_nasa"], only_new=True, verbose=False)
         finally:
             stop.set()
             stop_mps()
 
+    RUNS_ROOT.mkdir(parents=True, exist_ok=True)
     (RUNS_ROOT / "MATRIX_DONE.json").write_text(
         json.dumps({"aborted": aborted, "elapsed_h": round((time.time() - t0) / 3600.0, 3)}, indent=2),
         encoding="utf-8",

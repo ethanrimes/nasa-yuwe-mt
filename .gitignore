@@ -75,3 +75,8 @@ azure-credentials.json
 .myip.txt
 h100_run.pid
 .cloud-init.yaml
+
+# Re-downloadable model caches pulled for offline analysis
+analysis/models_cache/
+analysis/wandb/
+

@@ -31,6 +31,7 @@ class NllbRunSpec:
     model_key: str          # "nllb-600m" | "nllb-1.3b" | "nllb-3.3b"
     model_config: str       # path to a configs/model_*.yaml (relative to pkg root ok)
     epochs: float
+    subset: str = "sentence_plus_vocab"   # which data subset dir this run trains on
 
 
 def load_config(path: str | Path | None = None) -> dict:
@@ -42,6 +43,7 @@ def run_specs(cfg: dict | None = None) -> list[NllbRunSpec]:
     """Parse the nllb.yaml run list into structured specs."""
     cfg = cfg or load_config()
     default_epochs = float(cfg.get("epochs", 3))
+    default_subset = str(cfg.get("subset", "sentence_plus_vocab"))
     specs: list[NllbRunSpec] = []
     for r in cfg.get("runs", []):
         specs.append(
@@ -50,29 +52,47 @@ def run_specs(cfg: dict | None = None) -> list[NllbRunSpec]:
                 model_key=r["model_key"],
                 model_config=r["model_config"],
                 epochs=float(r.get("epochs", default_epochs)),
+                subset=str(r.get("subset", default_subset)),
             )
         )
     return specs
 
 
-def load_nllb_runs(train_pairs: int, cfg: dict | None = None) -> list[schedule.Run]:
+def load_nllb_runs(
+    train_pairs: int | dict[str, int],
+    cfg: dict | None = None,
+) -> list[schedule.Run]:
     """Build ``schedule.Run`` objects (one per NLLB run) for VRAM packing.
 
     ``train_pairs`` is the number of *parallel pairs* in the train split (the
-    scheduler internally doubles it for the bidirectional example count). Each run
-    can carry its own ``epochs`` so the big 3.3B can be capped lower to stay inside
-    the GPU budget.
+    scheduler internally doubles it for the bidirectional example count). It may be:
+      * an ``int`` — the same pair count for every run (legacy / single-subset), or
+      * a ``dict`` mapping subset name -> train-pair count, so the ``sentence_only``
+        runs are costed on the smaller split and ``sentence_plus_vocab`` on the full
+        corpus.
+    Each run carries its own ``epochs`` so the big 3.3B can be capped lower to stay
+    inside the GPU budget, and its own ``subset`` so the scheduler/labels track it.
     """
     cfg = cfg or load_config()
     eff_batch = int(cfg.get("effective_batch", 64))
+
+    def pairs_for(subset: str) -> int:
+        if isinstance(train_pairs, dict):
+            if subset not in train_pairs:
+                raise KeyError(
+                    f"train_pairs dict missing subset '{subset}'; have {sorted(train_pairs)}"
+                )
+            return int(train_pairs[subset])
+        return int(train_pairs)
+
     runs: list[schedule.Run] = []
     for s in run_specs(cfg):
         runs.append(
             schedule.Run(
                 run_id=s.run_id,
                 model_key=s.model_key,
-                subset="es_nasa_real",
-                pairs=int(train_pairs),
+                subset=s.subset,
+                pairs=pairs_for(s.subset),
                 epochs=s.epochs,
                 effective_batch=eff_batch,
             )
@@ -83,12 +103,17 @@ def load_nllb_runs(train_pairs: int, cfg: dict | None = None) -> list[schedule.R
 def launch_argv(
     spec: NllbRunSpec,
     *,
-    splits_dir: str | Path,
+    splits_root: str | Path,
     output_root: str | Path,
     python: str | None = None,
 ) -> list[str]:
-    """Build the argv to launch one NLLB run via ``scripts/train_nllb.py``."""
+    """Build the argv to launch one NLLB run via ``scripts/train_nllb.py``.
+
+    ``splits_root`` is the PARENT dir holding per-subset split dirs; the run's
+    ``--splits-dir`` is resolved to ``<splits_root>/<spec.subset>``.
+    """
     py = python or sys.executable
+    splits_dir = Path(splits_root) / spec.subset
     return [
         py, str(TRAIN_SCRIPT),
         "--run-id", spec.run_id,
@@ -103,12 +128,14 @@ def launch_argv(
 def launch_map(
     specs: list[NllbRunSpec],
     *,
-    splits_dir: str | Path,
+    splits_root: str | Path,
     output_root: str | Path,
     python: str | None = None,
 ) -> dict[str, list[str]]:
     """run_id -> launch argv, for the runner's dispatch table."""
     return {
-        s.run_id: launch_argv(s, splits_dir=splits_dir, output_root=output_root, python=python)
+        s.run_id: launch_argv(
+            s, splits_root=splits_root, output_root=output_root, python=python
+        )
         for s in specs
     }
