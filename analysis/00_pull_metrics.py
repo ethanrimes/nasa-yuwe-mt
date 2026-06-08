@@ -22,10 +22,14 @@ EN_ZH = {
     "360m-sentence": "experiments/en-zh/360m-sentence/scale-15946-20260608T142917",
     "360m-sentvocab": "experiments/en-zh/360m-sentvocab/scale-23729-20260608T142917",
 }
+# fp32+TF32 healthy re-run: 6 cells = {600m,1.3b,3.3b} x {sent, sentvocab}
 NLLB = {
-    "nllb-600m": "experiments/es-nasa/nllb-600m-es-nasa",
-    "nllb-1.3b": "experiments/es-nasa/nllb-1.3b-es-nasa",
-    "nllb-3.3b": "experiments/es-nasa/nllb-3.3b-es-nasa",
+    "nllb-600m-sent": "experiments/es-nasa/nllb-600m-es-nasa-sent",
+    "nllb-600m-sentvocab": "experiments/es-nasa/nllb-600m-es-nasa-sentvocab",
+    "nllb-1.3b-sent": "experiments/es-nasa/nllb-1.3b-es-nasa-sent",
+    "nllb-1.3b-sentvocab": "experiments/es-nasa/nllb-1.3b-es-nasa-sentvocab",
+    "nllb-3.3b-sent": "experiments/es-nasa/nllb-3.3b-es-nasa-sent",
+    "nllb-3.3b-sentvocab": "experiments/es-nasa/nllb-3.3b-es-nasa-sentvocab",
 }
 
 

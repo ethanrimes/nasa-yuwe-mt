@@ -22,9 +22,12 @@ RUN_FINAL = {
     "1p7b-sentvocab": "experiments/en-zh/1p7b-sentvocab/scale-23729-20260608T151709/final",
     "360m-sentence": "experiments/en-zh/360m-sentence/scale-15946-20260608T142917/final",
     "360m-sentvocab": "experiments/en-zh/360m-sentvocab/scale-23729-20260608T142917/final",
-    "nllb-600m": "experiments/es-nasa/nllb-600m-es-nasa/final",
-    "nllb-1.3b": "experiments/es-nasa/nllb-1.3b-es-nasa/final",
-    "nllb-3.3b": "experiments/es-nasa/nllb-3.3b-es-nasa/final",
+    "nllb-600m-sent": "experiments/es-nasa/nllb-600m-es-nasa-sent/final",
+    "nllb-600m-sentvocab": "experiments/es-nasa/nllb-600m-es-nasa-sentvocab/final",
+    "nllb-1.3b-sent": "experiments/es-nasa/nllb-1.3b-es-nasa-sent/final",
+    "nllb-1.3b-sentvocab": "experiments/es-nasa/nllb-1.3b-es-nasa-sentvocab/final",
+    "nllb-3.3b-sent": "experiments/es-nasa/nllb-3.3b-es-nasa-sent/final",
+    "nllb-3.3b-sentvocab": "experiments/es-nasa/nllb-3.3b-es-nasa-sentvocab/final",
 }
 
 GROUPS = {

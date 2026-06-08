@@ -34,7 +34,11 @@ TEMPLATE = "{direction}\n<|src|> {src} <|tgt|> {tgt}"
 DIRTOKENS = {"en2zh": "<|en2zh|>", "zh2en": "<|zh2en|>"}
 
 ENZH_RUNS = ["360m-sentence", "360m-sentvocab", "1p7b-sentence", "1p7b-sentvocab"]
-NLLB_RUNS = ["nllb-600m", "nllb-1.3b", "nllb-3.3b"]
+NLLB_RUNS = [
+    "nllb-600m-sent", "nllb-600m-sentvocab",
+    "nllb-1.3b-sent", "nllb-1.3b-sentvocab",
+    "nllb-3.3b-sent", "nllb-3.3b-sentvocab",
+]
 
 # ---- evaluation sentence sets ------------------------------------------------ #
 ENZH_INDOMAIN = {

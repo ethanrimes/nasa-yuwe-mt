@@ -1,0 +1,13 @@
+{
+  "run_id": "nllb-3.3b-es-nasa-sent",
+  "kind": "nllb",
+  "hf_id": "facebook/nllb-200-3.3B",
+  "model_key": "nllb-3.3b",
+  "n_train_examples_bidir": 30900,
+  "n_dev_examples_bidir": 910,
+  "epochs": 2.0,
+  "elapsed_s": 1782.5,
+  "run_dir": "/home/azureuser/nymt/english-chinese-mt-experiment/models/nllb_runs/nllb-3.3b-es-nasa-sent",
+  "nasa_lang_token_id": 256204,
+  "vocab_size": 256205
+}
