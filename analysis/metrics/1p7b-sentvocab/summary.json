@@ -1,0 +1,8 @@
+{
+  "run_id": "scale-23729-20260608T151709",
+  "scale": 23729,
+  "n_examples": 47458,
+  "epochs": 3.0,
+  "expected_steps": 2223,
+  "run_dir": "models/runs/1p7b-sentvocab/scale-23729-20260608T151709"
+}

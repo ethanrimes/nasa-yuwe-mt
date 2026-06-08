@@ -56,6 +56,28 @@ def _bucket(key: str, *, seed: str, n_buckets: int) -> int:
     return int(h[:8], 16) % n_buckets
 
 
+# Length (hex chars) of the content hash used to key the sentence/vocab level map.
+# Content-keyed (NOT row-index keyed) so it is robust to any row reordering between
+# the local source copy and the Blob copy downloaded on the VM.
+LEVEL_HASH_LEN = 16
+
+
+def level_hash(row: dict) -> str:
+    """Stable short content hash of a row's (spanish, nasa_yuwe) pair.
+
+    Used to look a row up in the committed ``sentence_keys.json`` level map so we can
+    split the corpus into the ``sentence_only`` vs ``sentence_plus_vocab`` subsets
+    exactly the way the En<->Zh ablation did — keyed on pair content, not file order.
+    """
+    return hashlib.sha1(_pair_key(row).encode()).hexdigest()[:LEVEL_HASH_LEN]
+
+
+def filter_by_keys(rows: Iterable[dict], keep_keys: set[str]) -> list[dict]:
+    """Keep only rows whose :func:`level_hash` is in ``keep_keys`` (order-stable)."""
+    keep = set(keep_keys)
+    return [r for r in rows if level_hash(r) in keep]
+
+
 def _valid(row: dict) -> bool:
     return bool(_norm(row.get(SPANISH_FIELD, ""))) and bool(_norm(row.get(NASA_FIELD, "")))
 

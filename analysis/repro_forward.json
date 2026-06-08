@@ -1,0 +1,26 @@
+[
+  {
+    "case": "A_bf16_master_weights",
+    "weight_dtype": "bfloat16",
+    "autocast_bf16": false,
+    "forward_loss": 5.875,
+    "forward_loss_finite": true,
+    "warmstart_eq_spanish": true
+  },
+  {
+    "case": "B_fp32_master_weights",
+    "weight_dtype": "float32",
+    "autocast_bf16": false,
+    "forward_loss": 5.9077,
+    "forward_loss_finite": true,
+    "warmstart_eq_spanish": true
+  },
+  {
+    "case": "C_fp32+bf16_autocast",
+    "weight_dtype": "float32",
+    "autocast_bf16": true,
+    "forward_loss": 5.9079,
+    "forward_loss_finite": true,
+    "warmstart_eq_spanish": true
+  }
+]

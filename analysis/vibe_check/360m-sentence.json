@@ -1,0 +1,66 @@
+{
+  "run": "360m-sentence",
+  "kind": "en-zh-causal",
+  "sets": {
+    "in_domain": {
+      "en2zh": [
+        {
+          "src": "The president met with foreign leaders to discuss climate policy.",
+          "hyp": "The president met with foreign leaders to discuss climate policy."
+        },
+        {
+          "src": "Scientists discovered a new species of fish in the deep ocean.",
+          "hyp": "Scientists have discovered a new species of fish in the deep ocean."
+        },
+        {
+          "src": "The company reported strong earnings in the third quarter.",
+          "hyp": "The company reported strong earnings in the third quarter."
+        }
+      ],
+      "zh2en": [
+        {
+          "src": "今天天气很好，我们去公园散步吧。",
+          "hyp": "The ಕಾಲವಾಗಿಸುವಾಗಿಸುವಾಗಿಸ"
+        },
+        {
+          "src": "中国的经济在过去几十年里增长迅速。",
+          "hyp": "P"
+        },
+        {
+          "src": "这家餐厅的菜很好吃，服务也很周到。",
+          "hyp": "ಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠಠ"
+        }
+      ]
+    },
+    "out_of_domain": {
+      "en2zh": [
+        {
+          "src": "Break a leg at your performance tonight!",
+          "hyp": "The following is a list of the most common questions we get asked about the program."
+        },
+        {
+          "src": "Configure the firewall to block inbound traffic on port 8080.",
+          "hyp": "The firewall is configured to allow inbound traffic on port 8080."
+        },
+        {
+          "src": "The quarterback threw a Hail Mary in the final seconds of the game.",
+          "hyp": "The quarterback threw a Hail Mary in the final seconds of the game."
+        }
+      ],
+      "zh2en": [
+        {
+          "src": "请在终端中运行该命令以重启服务器。",
+          "hyp": "K"
+        },
+        {
+          "src": "塞翁失马，焉知非福。",
+          "hyp": "The 1990s saw the rise of the 1990s, a decade of change. The 1990s saw the rise of the 1990s, a decade of change."
+        },
+        {
+          "src": "这个函数的时间复杂度是 O(n log n)。",
+          "hyp": "Theorem 1.1. Let A be a set of n elements. Then, the following statements are equivalent:"
+        }
+      ]
+    }
+  }
+}

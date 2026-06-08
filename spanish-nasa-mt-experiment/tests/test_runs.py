@@ -2,26 +2,37 @@
 
 from __future__ import annotations
 
+import pytest
+
 from snmt import runs as R
 
+ALL_RUN_IDS = {
+    "nllb-600m-es-nasa-sent",
+    "nllb-1.3b-es-nasa-sent",
+    "nllb-3.3b-es-nasa-sent",
+    "nllb-600m-es-nasa-sentvocab",
+    "nllb-1.3b-es-nasa-sentvocab",
+    "nllb-3.3b-es-nasa-sentvocab",
+}
 
-def test_run_specs_parses_yaml_with_per_run_epochs():
+
+def test_run_specs_parses_yaml_with_per_run_epochs_and_subset():
     specs = R.run_specs()
     by_id = {s.run_id: s for s in specs}
-    assert set(by_id) == {
-        "nllb-600m-es-nasa",
-        "nllb-1.3b-es-nasa",
-        "nllb-3.3b-es-nasa",
-    }
-    assert by_id["nllb-600m-es-nasa"].model_key == "nllb-600m"
-    assert by_id["nllb-600m-es-nasa"].epochs == 3
-    # 3.3B is capped at 2 epochs to stay in budget
-    assert by_id["nllb-3.3b-es-nasa"].epochs == 2
+    assert set(by_id) == ALL_RUN_IDS
+    assert by_id["nllb-600m-es-nasa-sent"].model_key == "nllb-600m"
+    assert by_id["nllb-600m-es-nasa-sent"].epochs == 3
+    # 3.3B is capped at 2 epochs to stay in budget (both subsets)
+    assert by_id["nllb-3.3b-es-nasa-sent"].epochs == 2
+    assert by_id["nllb-3.3b-es-nasa-sentvocab"].epochs == 2
+    # Subset axis wired through
+    assert by_id["nllb-600m-es-nasa-sent"].subset == "sentence_only"
+    assert by_id["nllb-600m-es-nasa-sentvocab"].subset == "sentence_plus_vocab"
 
 
-def test_load_nllb_runs_builds_schedule_runs():
+def test_load_nllb_runs_builds_schedule_runs_int_pairs():
     runs = R.load_nllb_runs(train_pairs=10000)
-    assert len(runs) == 3
+    assert len(runs) == 6
     keys = {r.model_key for r in runs}
     assert keys == {"nllb-600m", "nllb-1.3b", "nllb-3.3b"}
     for r in runs:
@@ -31,25 +42,49 @@ def test_load_nllb_runs_builds_schedule_runs():
         assert r.pairs == 10000
 
 
-def test_load_nllb_runs_empty_when_no_pairs_is_still_valid():
+def test_load_nllb_runs_per_subset_pairs():
+    runs = R.load_nllb_runs({"sentence_only": 15000, "sentence_plus_vocab": 22000})
+    by_id = {r.run_id: r for r in runs}
+    assert by_id["nllb-600m-es-nasa-sent"].pairs == 15000
+    assert by_id["nllb-600m-es-nasa-sentvocab"].pairs == 22000
+    # sentence_only is the smaller split for every size
+    for size in ("600m", "1.3b", "3.3b"):
+        assert (
+            by_id[f"nllb-{size}-es-nasa-sent"].pairs
+            < by_id[f"nllb-{size}-es-nasa-sentvocab"].pairs
+        )
+
+
+def test_load_nllb_runs_missing_subset_key_raises():
+    with pytest.raises(KeyError):
+        R.load_nllb_runs({"sentence_only": 100})  # sentence_plus_vocab absent
+
+
+def test_load_nllb_runs_subset_carried_into_schedule_run():
     runs = R.load_nllb_runs(train_pairs=1)
-    assert all(r.pairs == 1 for r in runs)
+    by_id = {r.run_id: r for r in runs}
+    assert by_id["nllb-1.3b-es-nasa-sent"].subset == "sentence_only"
+    assert by_id["nllb-1.3b-es-nasa-sentvocab"].subset == "sentence_plus_vocab"
 
 
-def test_launch_argv_targets_train_script_with_flags():
-    spec = R.run_specs()[0]
-    argv = R.launch_argv(spec, splits_dir="/tmp/splits", output_root="/tmp/out", python="python")
+def test_launch_argv_resolves_splits_dir_per_subset():
+    spec = next(s for s in R.run_specs() if s.subset == "sentence_only")
+    argv = R.launch_argv(spec, splits_root="/tmp/splits", output_root="/tmp/out", python="python")
     assert argv[0] == "python"
     assert str(R.TRAIN_SCRIPT) in argv[1]
     assert "--run-id" in argv and spec.run_id in argv
-    assert "--splits-dir" in argv and "/tmp/splits" in argv
+    i = argv.index("--splits-dir")
+    assert "sentence_only" in argv[i + 1].replace("\\", "/")
     assert "--output-root" in argv and "/tmp/out" in argv
     assert "--yes" in argv
 
 
-def test_launch_map_keys_by_run_id():
+def test_launch_map_keys_by_run_id_and_routes_subset_dirs():
     specs = R.run_specs()
-    m = R.launch_map(specs, splits_dir="/s", output_root="/o")
+    m = R.launch_map(specs, splits_root="/s", output_root="/o")
     assert set(m) == {s.run_id for s in specs}
+    by_id = {s.run_id: s for s in specs}
     for rid, argv in m.items():
         assert rid in argv
+        i = argv.index("--splits-dir")
+        assert by_id[rid].subset in argv[i + 1].replace("\\", "/")

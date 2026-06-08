@@ -90,10 +90,13 @@ def build_and_train(
     # -- tokenizer + model -------------------------------------------------- #
     # src_lang seeds the tokenizer's default; per-example framing is manual (lang.py).
     tokenizer = AutoTokenizer.from_pretrained(hf_id, src_lang=SPANISH_LANG)
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        hf_id,
-        torch_dtype=torch.bfloat16 if bool(t.get("bf16", True)) else torch.float32,
-    )
+    # Load in fp32 master weights. We deliberately do NOT pass a bf16 torch_dtype:
+    # the earlier run loaded true-bf16 master weights AND set bf16=True, so the
+    # optimizer state itself was bf16 and accumulated rounding error until AdamW
+    # produced NaNs (~step 25). With fp32 master weights + bf16=True the Trainer
+    # still autocasts the forward/backward to bf16 (the speed/VRAM win) while the
+    # optimizer keeps a stable fp32 copy — the standard mixed-precision recipe.
+    model = AutoModelForSeq2SeqLM.from_pretrained(hf_id)
     # Register Nasa-Yuwe as a real language token, resize + warm-start embeddings.
     nasa_id = ensure_nasa_lang_token(tokenizer, model)
     print(f"[snmt] pbb_Latn token id={nasa_id}; vocab={len(tokenizer)}", flush=True)
@@ -127,6 +130,7 @@ def build_and_train(
         fp16=bool(t.get("fp16", False)),
         gradient_checkpointing=bool(t.get("gradient_checkpointing", True)),
         optim=str(t.get("optim", "adamw_torch")),
+        max_grad_norm=float(t.get("max_grad_norm", 1.0)),
         seed=int(t.get("seed", 17)),
         logging_steps=int(t.get("logging_steps", 25)),
         eval_strategy="steps",
@@ -140,7 +144,23 @@ def build_and_train(
         dataloader_num_workers=int(t.get("dataloader_num_workers", 2)),
     )
 
-    trainer = Seq2SeqTrainer(
+    # A non-finite training loss (overflow on a bad batch) would otherwise let
+    # NaN/Inf grads reach the optimizer and poison every weight permanently. This
+    # subclass detects that, scrubs the grads to zero, and returns a zero loss so the
+    # step is effectively skipped (lr scheduler still advances) instead of diverging.
+    class _GuardedSeq2SeqTrainer(Seq2SeqTrainer):
+        def training_step(self, *args, **kwargs):  # type: ignore[override]
+            loss = super().training_step(*args, **kwargs)
+            if not torch.isfinite(loss):
+                for p in self.model.parameters():
+                    if p.grad is not None:
+                        torch.nan_to_num_(p.grad, nan=0.0, posinf=0.0, neginf=0.0)
+                print("[snmt][guard] non-finite training loss; grads scrubbed, step skipped",
+                      flush=True)
+                return torch.zeros_like(loss)
+            return loss
+
+    trainer = _GuardedSeq2SeqTrainer(
         model=model,
         args=args,
         train_dataset=train_ds,
