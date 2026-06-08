@@ -1,0 +1,13 @@
+{
+  "run_id": "nllb-600m-es-nasa-sent",
+  "kind": "nllb",
+  "hf_id": "facebook/nllb-200-distilled-600M",
+  "model_key": "nllb-600m",
+  "n_train_examples_bidir": 30900,
+  "n_dev_examples_bidir": 910,
+  "epochs": 3.0,
+  "elapsed_s": 1301.1,
+  "run_dir": "/home/azureuser/nymt/english-chinese-mt-experiment/models/nllb_runs/nllb-600m-es-nasa-sent",
+  "nasa_lang_token_id": 256204,
+  "vocab_size": 256205
+}

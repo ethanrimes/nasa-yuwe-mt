@@ -43,31 +43,58 @@
     "n_examples": 47458,
     "wall_min": 19.9
   },
-  "nllb-600m": {
+  "nllb-600m-sent": {
     "kind": "nllb-es-nasa",
     "hf_id": "facebook/nllb-200-distilled-600M",
-    "final_train_loss": 0.0,
-    "final_eval_loss": NaN,
+    "final_train_loss": 2.3989,
+    "final_eval_loss": 2.5265,
+    "epochs": 3.0,
+    "n_train_bidir": 30900,
+    "wall_min": 21.7
+  },
+  "nllb-600m-sentvocab": {
+    "kind": "nllb-es-nasa",
+    "hf_id": "facebook/nllb-200-distilled-600M",
+    "final_train_loss": 2.3489,
+    "final_eval_loss": 2.4894,
     "epochs": 3.0,
     "n_train_bidir": 45424,
-    "wall_min": 25.1
+    "wall_min": 28.1
   },
-  "nllb-1.3b": {
+  "nllb-1.3b-sent": {
     "kind": "nllb-es-nasa",
     "hf_id": "facebook/nllb-200-1.3B",
-    "final_train_loss": 0.0,
-    "final_eval_loss": NaN,
+    "final_train_loss": 2.122,
+    "final_eval_loss": 2.3053,
+    "epochs": 3.0,
+    "n_train_bidir": 30900,
+    "wall_min": 39.5
+  },
+  "nllb-1.3b-sentvocab": {
+    "kind": "nllb-es-nasa",
+    "hf_id": "facebook/nllb-200-1.3B",
+    "final_train_loss": 2.0669,
+    "final_eval_loss": 2.265,
     "epochs": 3.0,
     "n_train_bidir": 45424,
-    "wall_min": 44.2
+    "wall_min": 51.2
   },
-  "nllb-3.3b": {
+  "nllb-3.3b-sent": {
     "kind": "nllb-es-nasa",
     "hf_id": "facebook/nllb-200-3.3B",
-    "final_train_loss": 0.0,
-    "final_eval_loss": NaN,
+    "final_train_loss": 2.1108,
+    "final_eval_loss": 2.3043,
+    "epochs": 2.0,
+    "n_train_bidir": 30900,
+    "wall_min": 29.7
+  },
+  "nllb-3.3b-sentvocab": {
+    "kind": "nllb-es-nasa",
+    "hf_id": "facebook/nllb-200-3.3B",
+    "final_train_loss": 2.0836,
+    "final_eval_loss": 2.3612,
     "epochs": 2.0,
     "n_train_bidir": 45424,
-    "wall_min": 32.5
+    "wall_min": 44.1
   }
 }

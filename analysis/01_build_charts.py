@@ -22,12 +22,20 @@ C = REPO / "analysis" / "charts"
 C.mkdir(parents=True, exist_ok=True)
 
 EN_ZH = ["360m-sentence", "360m-sentvocab", "1p7b-sentence", "1p7b-sentvocab"]
-NLLB = ["nllb-600m", "nllb-1.3b", "nllb-3.3b"]
+NLLB = [
+    "nllb-600m-sent", "nllb-600m-sentvocab",
+    "nllb-1.3b-sent", "nllb-1.3b-sentvocab",
+    "nllb-3.3b-sent", "nllb-3.3b-sentvocab",
+]
 COLORS = {
     "360m-sentence": "#4C72B0", "360m-sentvocab": "#55A868",
     "1p7b-sentence": "#C44E52", "1p7b-sentvocab": "#8172B3",
-    "nllb-600m": "#4C72B0", "nllb-1.3b": "#DD8452", "nllb-3.3b": "#C44E52",
+    "nllb-600m-sent": "#4C72B0", "nllb-600m-sentvocab": "#4C72B0",
+    "nllb-1.3b-sent": "#DD8452", "nllb-1.3b-sentvocab": "#DD8452",
+    "nllb-3.3b-sent": "#C44E52", "nllb-3.3b-sentvocab": "#C44E52",
 }
+# sentvocab variants drawn dashed so size-pairs share a hue
+NLLB_STYLE = {r: ("--" if r.endswith("sentvocab") else "-") for r in NLLB}
 
 
 def load_json(p: Path):
@@ -142,10 +150,10 @@ def chart_nllb_loss():
     for run in NLLB:
         xs, ys = train_curve(run)
         if xs:
-            plt.plot(xs, ys, label=run, color=COLORS[run], lw=1.8)
-    plt.xlabel("training step"); plt.ylabel("train loss")
-    plt.title("NLLB es↔nasa (Yuwe) fine-tune: training loss")
-    plt.legend(); plt.grid(alpha=0.3); plt.tight_layout()
+            plt.plot(xs, ys, NLLB_STYLE[run], label=run, color=COLORS[run], lw=1.8)
+    plt.xlabel("training step"); plt.ylabel("train loss (cross-entropy)")
+    plt.title("NLLB es↔nasa (Yuwe) fine-tune: training loss (fp32+TF32)")
+    plt.legend(fontsize=8); plt.grid(alpha=0.3); plt.tight_layout()
     plt.savefig(C / "04_nllb_train_loss.png", dpi=130); plt.close()
 
 

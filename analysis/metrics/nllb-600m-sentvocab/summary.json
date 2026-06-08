@@ -1,13 +1,13 @@
 {
-  "run_id": "nllb-600m-es-nasa",
+  "run_id": "nllb-600m-es-nasa-sentvocab",
   "kind": "nllb",
   "hf_id": "facebook/nllb-200-distilled-600M",
   "model_key": "nllb-600m",
   "n_train_examples_bidir": 45424,
   "n_dev_examples_bidir": 1440,
   "epochs": 3.0,
-  "elapsed_s": 1507.8,
-  "run_dir": "/home/azureuser/nymt/english-chinese-mt-experiment/models/nllb_runs/nllb-600m-es-nasa",
+  "elapsed_s": 1683.5,
+  "run_dir": "/home/azureuser/nymt/english-chinese-mt-experiment/models/nllb_runs/nllb-600m-es-nasa-sentvocab",
   "nasa_lang_token_id": 256204,
   "vocab_size": 256205
 }
