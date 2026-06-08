@@ -21,5 +21,5 @@ training:
   logging_steps: 25
   eval_steps: 500
   save_steps: 500
-  save_total_limit: 2
+  save_total_limit: 1   # keep disk small; final/ is saved separately and mirrored
   dataloader_num_workers: 2
