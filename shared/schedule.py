@@ -25,11 +25,12 @@ from . import config
 THROUGHPUT_EX_PER_S = {
     "360m": 38.0,
     "1.7b": 11.0,
-    # NLLB seq2seq fine-tune throughput on one H100 (bf16 + grad-checkpointing),
-    # training examples/s (one example = one direction of one pair). Conservative.
-    "nllb-600m": 55.0,
-    "nllb-1.3b": 28.0,
-    "nllb-3.3b": 11.0,
+    # NLLB seq2seq fine-tune throughput on one H100, training examples/s (one
+    # example = one direction of one pair). fp32 + TF32 (NOT bf16 — that diverges):
+    # TF32 tensor cores keep this close to bf16, so only a modest haircut. Conservative.
+    "nllb-600m": 44.0,
+    "nllb-1.3b": 22.0,
+    "nllb-3.3b": 9.0,
 }
 
 # Fixed per-run overhead (model load, tokenize, eval passes, checkpoint writes).

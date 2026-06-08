@@ -100,11 +100,15 @@ MODELS = {
     # These are encoder-decoder (M2M100 arch); a *different* training path from the
     # SmolLM2 causal-LM proxy runs (see spanish-nasa-mt-experiment / pkg `snmt`).
     # They are packed onto the same H100 alongside the En-Zh matrix to fill spare
-    # VRAM (max GPU utilization) and share the one auto-teardown. VRAM is the bf16 +
-    # gradient-checkpointing training footprint incl. AdamW optimizer state.
-    "nllb-600m": ModelSpec("nllb-600m", "facebook/nllb-200-distilled-600M", approx_vram_gb_train=10.0),
-    "nllb-1.3b": ModelSpec("nllb-1.3b", "facebook/nllb-200-1.3B", approx_vram_gb_train=20.0),
-    "nllb-3.3b": ModelSpec("nllb-3.3b", "facebook/nllb-200-3.3B", approx_vram_gb_train=44.0),
+    # VRAM (max GPU utilization) and share the one auto-teardown. Trained in fp32 +
+    # TF32 (bf16 autocast diverges on this corpus — see snmt/train.py); fp32 keeps
+    # full master weights + fp32 AdamW state (~16 bytes/param) so the footprint is
+    # ~2x the bf16 estimate. Deliberately conservative after a real OOM: with
+    # usable=72 GB the 3.3B (75) always seats ALONE, while a 1.3B (32) can pair with
+    # a 600M (18) or another 1.3B (64) — the 3.3B never shares a card.
+    "nllb-600m": ModelSpec("nllb-600m", "facebook/nllb-200-distilled-600M", approx_vram_gb_train=18.0),
+    "nllb-1.3b": ModelSpec("nllb-1.3b", "facebook/nllb-200-1.3B", approx_vram_gb_train=32.0),
+    "nllb-3.3b": ModelSpec("nllb-3.3b", "facebook/nllb-200-3.3B", approx_vram_gb_train=75.0),
 }
 
 H100_VRAM_GB = 80.0

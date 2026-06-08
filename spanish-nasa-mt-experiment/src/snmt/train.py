@@ -77,6 +77,18 @@ def build_and_train(
         Seq2SeqTrainingArguments,
     )
 
+    # CRITICAL stability fix: NLLB/M2M100 fine-tunes diverge under bf16 AUTOCAST on
+    # this corpus — the bf16 forward yields a non-finite loss within ~100 steps (the
+    # guard below then has to skip every step, so the model never learns). The proven
+    # root cause was bf16 master weights; loading fp32 masters fixed the *optimizer*
+    # NaN, but the bf16 autocast forward is still unstable here. We therefore train in
+    # full fp32 (configs set bf16:false). To keep fp32 fast on the H100 we enable TF32
+    # tensor-core matmuls — near-bf16 throughput with the FULL fp32 exponent range and
+    # a 10-bit mantissa (vs bf16's 7), which is numerically stable for this fine-tune.
+    if torch.cuda.is_available():
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+
     splits_dir = Path(splits_dir)
     run_dir = _resolve_run_dir(output_root, run_id)
     ckpt_dir = run_dir / "checkpoints"
@@ -126,7 +138,7 @@ def build_and_train(
         weight_decay=float(t.get("weight_decay", 0.0)),
         warmup_ratio=float(t.get("warmup_ratio", 0.03)),
         lr_scheduler_type=str(t.get("lr_scheduler_type", "cosine")),
-        bf16=bool(t.get("bf16", True)),
+        bf16=bool(t.get("bf16", False)),
         fp16=bool(t.get("fp16", False)),
         gradient_checkpointing=bool(t.get("gradient_checkpointing", True)),
         optim=str(t.get("optim", "adamw_torch")),

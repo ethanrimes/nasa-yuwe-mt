@@ -14,7 +14,7 @@ training:
   weight_decay: 0.0
   warmup_ratio: 0.06
   lr_scheduler_type: cosine
-  bf16: true
+  bf16: false        # fp32 + TF32 (see train.py): bf16 autocast diverges on this corpus
   gradient_checkpointing: true
   optim: adamw_torch
   max_grad_norm: 1.0
