@@ -408,6 +408,13 @@ def cmd_run(args) -> int:
         # Absent a key, run_matrix_on_vm.launch_run cleanly disables wandb instead.
         _wandb_key = os.environ.get("WANDB_API_KEY", "").strip()
         wandb_export = f"export WANDB_API_KEY={shlex.quote(_wandb_key)}\n" if _wandb_key else ""
+        # Propagate an optional run-subset filter so the on-VM matrix only runs the
+        # selected NLLB runs (e.g. re-doing just the small models). Comma-separated
+        # substrings of run ids; honored by snmt.runs.run_specs(). Absent => all runs.
+        _snmt_only = os.environ.get("SNMT_ONLY_RUNS", "").strip()
+        snmt_only_export = (
+            f"export SNMT_ONLY_RUNS={shlex.quote(_snmt_only)}\n" if _snmt_only else ""
+        )
         # CRITICAL: training must NOT be tied to this persistent SSH session. NRMS
         # periodically re-remediates the NSGs and can RESET an established SSH
         # connection ("client_loop: send disconnect: Connection reset"). When that
@@ -442,6 +449,7 @@ def cmd_run(args) -> int:
             "uv pip install -e .\n"
             f"{snmt_install}\n"
             f"{wandb_export}"
+            f"{snmt_only_export}"
             f"python -u scripts/run_matrix_on_vm.py {spot_flag} {budget_arg} {nllb_flag} {onlynllb_flag} {only_flag}\n"
         )
         # Ship the script via base64 to dodge all quoting hazards, then launch it

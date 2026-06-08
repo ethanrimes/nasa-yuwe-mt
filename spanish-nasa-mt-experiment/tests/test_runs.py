@@ -30,6 +30,29 @@ def test_run_specs_parses_yaml_with_per_run_epochs_and_subset():
     assert by_id["nllb-600m-es-nasa-sentvocab"].subset == "sentence_plus_vocab"
 
 
+def test_snmt_only_runs_filters_specs(monkeypatch):
+    # Re-run just the small models: tokens match a substring of the run id.
+    monkeypatch.setenv("SNMT_ONLY_RUNS", "600m,1.3b")
+    ids = {s.run_id for s in R.run_specs()}
+    assert ids == {
+        "nllb-600m-es-nasa-sent",
+        "nllb-1.3b-es-nasa-sent",
+        "nllb-600m-es-nasa-sentvocab",
+        "nllb-1.3b-es-nasa-sentvocab",
+    }
+    # The filter propagates to the schedule.Run list the packer consumes.
+    run_ids = {r.run_id for r in R.load_nllb_runs(train_pairs=1)}
+    assert run_ids == ids
+    assert "nllb-3.3b-es-nasa-sent" not in run_ids
+
+
+def test_snmt_only_runs_blank_or_unset_keeps_all(monkeypatch):
+    monkeypatch.setenv("SNMT_ONLY_RUNS", "  ,  ")
+    assert {s.run_id for s in R.run_specs()} == ALL_RUN_IDS
+    monkeypatch.delenv("SNMT_ONLY_RUNS", raising=False)
+    assert {s.run_id for s in R.run_specs()} == ALL_RUN_IDS
+
+
 def test_load_nllb_runs_builds_schedule_runs_int_pairs():
     runs = R.load_nllb_runs(train_pairs=10000)
     assert len(runs) == 6

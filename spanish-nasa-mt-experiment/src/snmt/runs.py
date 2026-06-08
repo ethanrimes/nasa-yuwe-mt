@@ -12,6 +12,7 @@ Pure orchestration logic — no torch. The only third-party import is ``nymt_sha
 
 from __future__ import annotations
 
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -40,7 +41,16 @@ def load_config(path: str | Path | None = None) -> dict:
 
 
 def run_specs(cfg: dict | None = None) -> list[NllbRunSpec]:
-    """Parse the nllb.yaml run list into structured specs."""
+    """Parse the nllb.yaml run list into structured specs.
+
+    The optional ``SNMT_ONLY_RUNS`` environment variable subsets which runs are
+    returned (and therefore which the scheduler packs and the runner launches).
+    It is a comma-separated list of case-insensitive substrings; a run is kept if
+    ANY token is a substring of its ``run_id``. This lets us re-run just a subset
+    (e.g. ``SNMT_ONLY_RUNS=600m,1.3b`` to redo the small models without touching
+    the already-finished 3.3B runs) without editing the committed config. Unset or
+    empty => no filtering.
+    """
     cfg = cfg or load_config()
     default_epochs = float(cfg.get("epochs", 3))
     default_subset = str(cfg.get("subset", "sentence_plus_vocab"))
@@ -55,6 +65,10 @@ def run_specs(cfg: dict | None = None) -> list[NllbRunSpec]:
                 subset=str(r.get("subset", default_subset)),
             )
         )
+    tokens = [t.strip().lower() for t in os.environ.get("SNMT_ONLY_RUNS", "").split(",")]
+    tokens = [t for t in tokens if t]
+    if tokens:
+        specs = [s for s in specs if any(tok in s.run_id.lower() for tok in tokens)]
     return specs
 
 
