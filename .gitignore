@@ -80,3 +80,8 @@ h100_run.pid
 analysis/models_cache/
 analysis/wandb/
 
+
+# transient H100 launch/monitor artifacts
+_nllb_rerun_*
+_blob_check/
+_nllb_rerun2_*.log
