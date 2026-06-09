@@ -29,6 +29,7 @@ CACHE = REPO / "analysis" / "models_cache"
 OUT = REPO / "analysis" / "vibe_check"
 OUT.mkdir(parents=True, exist_ok=True)
 NASA_JSONL = REPO / "english-chinese-mt-experiment" / "data-en-zh" / "source" / "nasa_yuwe_parallel_dataset.jsonl"
+ENZH_JSONL = REPO / "english-chinese-mt-experiment" / "data-en-zh" / "processed" / "en_zh_parallel_dataset.jsonl"
 
 TEMPLATE = "{direction}\n<|src|> {src} <|tgt|> {tgt}"
 DIRTOKENS = {"en2zh": "<|en2zh|>", "zh2en": "<|zh2en|>"}
@@ -41,30 +42,35 @@ NLLB_RUNS = [
 ]
 
 # ---- evaluation sentence sets ------------------------------------------------ #
-ENZH_INDOMAIN = {
-    "en2zh": [
-        {"en": "The president met with foreign leaders to discuss climate policy."},
-        {"en": "Scientists discovered a new species of fish in the deep ocean."},
-        {"en": "The company reported strong earnings in the third quarter."},
-    ],
-    "zh2en": [
-        {"zh": "今天天气很好，我们去公园散步吧。"},
-        {"zh": "中国的经济在过去几十年里增长迅速。"},
-        {"zh": "这家餐厅的菜很好吃，服务也很周到。"},
-    ],
-}
-ENZH_OOD = {
-    "en2zh": [
-        {"en": "Break a leg at your performance tonight!"},
-        {"en": "Configure the firewall to block inbound traffic on port 8080."},
-        {"en": "The quarterback threw a Hail Mary in the final seconds of the game."},
-    ],
-    "zh2en": [
-        {"zh": "请在终端中运行该命令以重启服务器。"},
-        {"zh": "塞翁失马，焉知非福。"},
-        {"zh": "这个函数的时间复杂度是 O(n log n)。"},
-    ],
-}
+# en-zh in-domain sets are loaded at runtime from the real parallel corpus so we
+# can show generations against the ACTUAL ground-truth target (ref column).
+# We sample from two registers present in training: religious (bible) and
+# constitutional (legal/governance) to gauge how generation quality varies.
+ENZH_DOMAINS = {"religious_bible": "religious", "literary_cultural": "literary"}
+
+
+def _load_enzh_pairs(domain: str, n: int = 3) -> list[dict]:
+    """Deterministically pick n real sentence-level {en, zh} pairs for a domain."""
+    pairs: list[dict] = []
+    if not ENZH_JSONL.exists():
+        return pairs
+    with ENZH_JSONL.open(encoding="utf-8") as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if r.get("domain") != domain or r.get("level") != "sentence":
+                continue
+            en, zh = (r.get("en") or "").strip(), (r.get("zh") or "").strip()
+            # keep medium-length, single-sentence-ish examples for readability
+            if not en or not zh or len(en) > 160 or len(en) < 25:
+                continue
+            pairs.append({"en": en, "zh": zh})
+            if len(pairs) >= n:
+                break
+    return pairs
+
 
 # Out-of-domain Spanish prompts for es->nasa (no reference; judging fluency only).
 ES_OOD = [
@@ -98,17 +104,22 @@ def vibe_enzh(run: str) -> dict:
     tok = AutoTokenizer.from_pretrained(str(mdir))
     model = AutoModelForCausalLM.from_pretrained(str(mdir), torch_dtype=torch.float32)
     result = {"run": run, "kind": "en-zh-causal", "sets": {}}
-    for setname, sset in (("in_domain", ENZH_INDOMAIN), ("out_of_domain", ENZH_OOD)):
+    for setname, domain in ENZH_DOMAINS.items():
+        pairs = _load_enzh_pairs(domain, 3)
+        if not pairs:
+            continue
         result["sets"][setname] = {}
-        for direction, rows in sset.items():
+        for direction in ("en2zh", "zh2en"):
             hyps = generate_translations(
-                model=model, tokenizer=tok, rows=rows, direction=direction,
+                model=model, tokenizer=tok, rows=pairs, direction=direction,
                 template=TEMPLATE, direction_tokens=DIRTOKENS,
                 max_new_tokens=64, num_beams=1, batch_size=3, device="cpu",
             )
+            # for en2zh the gold target is zh; for zh2en it is en
             src_key = "en" if direction == "en2zh" else "zh"
+            ref_key = "zh" if direction == "en2zh" else "en"
             result["sets"][setname][direction] = [
-                {"src": r[src_key], "hyp": h} for r, h in zip(rows, hyps)
+                {"src": r[src_key], "hyp": h, "ref": r[ref_key]} for r, h in zip(pairs, hyps)
             ]
     del model
     return result

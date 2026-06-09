@@ -1,0 +1,56 @@
+{
+  "run": "nllb-3.3b-sent",
+  "kind": "nllb-seq2seq",
+  "nan_or_inf_param_tensors": 0,
+  "param_tensors": 1013,
+  "sets": {
+    "in_domain": {
+      "es2nasa": [
+        {
+          "src": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "ref": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "hyp": "Adxa' Kristo Jesukristo's jxkaahnisawe'sxtxi txãawe'sx yakh fxi'zesa's jxpa'yakx, Pablo's vxite' Kristo's jxkaahnisawe'sxtxi txãawe'sx yakh fxi'zesa's txãawe'sx yakh"
+        },
+        {
+          "src": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "ref": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "hyp": "Idxa' Corinto çxhabte fxi'zesawe'sxtxi jxpe'jsa Jesukristo yakh fxi'zesawe'sxtxi txãawe'sx yakh fxi'zesawe'sxtxi txãawe'sx yakh fxi'zesawe'sx yakh fxi'zesawe'sx"
+        },
+        {
+          "src": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "ref": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "hyp": "Dxusa' kwe'sxtxi jxpe'jsa Jesukristo's jxpa'yakxçxa, Dxus yakh puutx we'wena fxi'zewa'ja's."
+        }
+      ],
+      "nasa2es": [
+        {
+          "src": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "ref": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "hyp": "Pablo, apóstol de Jesucristo por la gracia de Dios y por el llamado de Dios."
+        },
+        {
+          "src": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "ref": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "hyp": "Saludos a la iglesia de Dios en Corinto, y a todos los que han sido llamados a ser santos en Cristo Jesús, y que han sido salvados por la fe en Dios y por nuestro Señor Jesucristo."
+        },
+        {
+          "src": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "ref": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "hyp": "Que Dios, nuestro Padre y Señor Jesucristo os concedan gracia. Que Dios os conceda paz."
+        }
+      ]
+    },
+    "out_of_domain": {
+      "es2nasa": [
+        {
+          "src": "El gobierno aprobó una nueva ley económica.",
+          "hyp": "El gobierno aprobó una nueva ley económica."
+        },
+        {
+          "src": "Por favor reinicie el servidor desde la terminal.",
+          "hyp": "Por favor, reinicie el servidor desde el terminal."
+        }
+      ]
+    }
+  }
+}

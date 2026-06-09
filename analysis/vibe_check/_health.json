@@ -1,5 +1,37 @@
 [
   {
+    "run": "360m-sentence",
+    "kind": "en-zh-causal",
+    "n_outputs": 12,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": null
+  },
+  {
+    "run": "360m-sentvocab",
+    "kind": "en-zh-causal",
+    "n_outputs": 12,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": null
+  },
+  {
+    "run": "1p7b-sentence",
+    "kind": "en-zh-causal",
+    "n_outputs": 12,
+    "n_degenerate": 3,
+    "degenerate_frac": 0.25,
+    "nan_param_tensors": null
+  },
+  {
+    "run": "1p7b-sentvocab",
+    "kind": "en-zh-causal",
+    "n_outputs": 12,
+    "n_degenerate": 4,
+    "degenerate_frac": 0.333,
+    "nan_param_tensors": null
+  },
+  {
     "run": "nllb-600m-sent",
     "kind": "nllb-seq2seq",
     "n_outputs": 8,
@@ -9,6 +41,38 @@
   },
   {
     "run": "nllb-600m-sentvocab",
+    "kind": "nllb-seq2seq",
+    "n_outputs": 8,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": 0
+  },
+  {
+    "run": "nllb-1.3b-sent",
+    "kind": "nllb-seq2seq",
+    "n_outputs": 8,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": 0
+  },
+  {
+    "run": "nllb-1.3b-sentvocab",
+    "kind": "nllb-seq2seq",
+    "n_outputs": 8,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": 0
+  },
+  {
+    "run": "nllb-3.3b-sent",
+    "kind": "nllb-seq2seq",
+    "n_outputs": 8,
+    "n_degenerate": 0,
+    "degenerate_frac": 0.0,
+    "nan_param_tensors": 0
+  },
+  {
+    "run": "nllb-3.3b-sentvocab",
     "kind": "nllb-seq2seq",
     "n_outputs": 8,
     "n_degenerate": 0,
