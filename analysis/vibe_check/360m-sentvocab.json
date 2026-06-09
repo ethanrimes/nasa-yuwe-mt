@@ -2,63 +2,75 @@
   "run": "360m-sentvocab",
   "kind": "en-zh-causal",
   "sets": {
-    "in_domain": {
+    "religious_bible": {
       "en2zh": [
         {
-          "src": "The president met with foreign leaders to discuss climate policy.",
-          "hyp": "The president met with foreign leaders to discuss climate policy."
+          "src": "Paul, called to be an apostle of Jesus Christ through the will of God, and our brother Sosthenes,",
+          "hyp": "The first thing that we need to do is to understand the meaning of the word “apostle.” The word “apostle” is a Greek word that means “one sent out.” It is used in the New Testament to refer to the twelve disciples of Jesus, and to the twelve apostles of the",
+          "ref": "奉神旨意，蒙召作耶稣基督使徒的保罗，同兄弟所提尼，"
         },
         {
-          "src": "Scientists discovered a new species of fish in the deep ocean.",
-          "hyp": "Scientists have discovered a new species of fish in the deep ocean."
+          "src": "Grace to you and peace from God our Father and the Lord Jesus Christ.",
+          "hyp": "The following is a list of the most common questions we get asked about the Bible.",
+          "ref": "愿恩惠、平安从神我们的父并主耶稣基督归与你们。"
         },
         {
-          "src": "The company reported strong earnings in the third quarter.",
-          "hyp": "The company reported strong earnings in the third quarter."
+          "src": "I always thank my God concerning you, for the grace of God which was given you in Christ Jesus;",
+          "hyp": "The Greek word for grace is the same word used in the New Testament for the gift of the Holy Spirit.",
+          "ref": "我常为你们感谢我的神，因神在基督耶稣里所赐给你们的恩惠；"
         }
       ],
       "zh2en": [
         {
-          "src": "今天天气很好，我们去公园散步吧。",
-          "hyp": "The 100000000000000000000000000000000000000000000000000000000000"
+          "src": "奉神旨意，蒙召作耶稣基督使徒的保罗，同兄弟所提尼，",
+          "hyp": "The 1990s saw the rise of the 1990s, a decade of the 1990s, a decade of the 1990s, a decade of the 1990s, a decade of the 1990s",
+          "ref": "Paul, called to be an apostle of Jesus Christ through the will of God, and our brother Sosthenes,"
         },
         {
-          "src": "中国的经济在过去几十年里增长迅速。",
-          "hyp": "100000000000000000000000000000000000000000000000000000000000000"
+          "src": "愿恩惠、平安从神我们的父并主耶稣基督归与你们。",
+          "hyp": "The first line of the poem is a reference to the Buddha, who is the source of all wisdom. The second line is a reference to the Buddha's teaching, which is the source of all wisdom. The third line is a reference to the Buddha's teaching, which is the source of all wisdom. The",
+          "ref": "Grace to you and peace from God our Father and the Lord Jesus Christ."
         },
         {
-          "src": "这家餐厅的菜很好吃，服务也很周到。",
-          "hyp": "The 100000000000000000000000000000000000000000000000000000000000"
+          "src": "我常为你们感谢我的神，因神在基督耶稣里所赐给你们的恩惠；",
+          "hyp": "The following is a list of the most common words in the English language.",
+          "ref": "I always thank my God concerning you, for the grace of God which was given you in Christ Jesus;"
         }
       ]
     },
-    "out_of_domain": {
+    "literary_cultural": {
       "en2zh": [
         {
-          "src": "Break a leg at your performance tonight!",
-          "hyp": "The following is a list of the most common questions we get asked about the program."
+          "src": "The umbilical cord of the newborn should be buried in the center of the hearth so that the boy or girl never suffers from stomach pain.",
+          "hyp": "The umbilical cord should be buried in the center of the hearth so that the boy or girl never suffers from stomach pain.",
+          "ref": "新生儿的脐带应该埋在炉灶的中心，这样男孩或女孩就永远不会遭受腹痛。"
         },
         {
-          "src": "Configure the firewall to block inbound traffic on port 8080.",
-          "hyp": "The firewall is configured to allow inbound traffic on port 8080."
+          "src": "The first haircut of the boy or girl must be kept with joy and capio corn, so that the hair is not damaged and to prevent baldness.",
+          "hyp": "The hair must be cut in the middle of the head, and the hair must be cut in a way that the hair is not cut in the middle of the head.",
+          "ref": "男孩或女孩的第一次剪发应该带着喜悦和卡皮奥玉米一起保存，这样头发就不会受损，并能防止秃顶。"
         },
         {
-          "src": "The quarterback threw a Hail Mary in the final seconds of the game.",
-          "hyp": "The quarterback threw a Hail Mary in the final seconds of the game."
+          "src": "If you want young women's childbirth to be quick, you must give them the hen's very first egg.",
+          "hyp": "The first thing that the Lord Jesus Christ did was to give us the first of His commandments. He said, \"Thou shalt have no other gods before Me.\" He said, \"Thou shalt not make for yourself an idol.\" He said, \"Thou shalt not take the name of the Lord thy",
+          "ref": "如果要让年轻女孩的分娩速度加快，必须给她们吃母鸡下的第一个蛋。"
         }
       ],
       "zh2en": [
         {
-          "src": "请在终端中运行该命令以重启服务器。",
-          "hyp": "K"
+          "src": "新生儿的脐带应该埋在炉灶的中心，这样男孩或女孩就永远不会遭受腹痛。",
+          "hyp": "The following is a list of the most common questions we get asked about the product.",
+          "ref": "The umbilical cord of the newborn should be buried in the center of the hearth so that the boy or girl never suffers from stomach pain."
         },
         {
-          "src": "塞翁失马，焉知非福。",
-          "hyp": "The 1990s saw the rise of the 1990s, a decade of change. The 1990s saw the rise of the 1990s, a decade of change."
+          "src": "男孩或女孩的第一次剪发应该带着喜悦和卡皮奥玉米一起保存，这样头发就不会受损，并能防止秃顶。",
+          "hyp": "D 主要的，主要的，主要的，主要的，主要的，主要的，主要的，主要的，主要的，主要的，主要的，主要的，",
+          "ref": "The first haircut of the boy or girl must be kept with joy and capio corn, so that the hair is not damaged and to prevent baldness."
         },
         {
-          "src": "这个函数的时间复杂度是 O(n log n)。",
-          "hyp": "Theorem 1.1. Let A be a set of n elements. Then, the following statements are equivalent:"
+          "src": "如果要让年轻女孩的分娩速度加快，必须给她们吃母鸡下的第一个蛋。",
+          "hyp": "The following is a list of the most common questions we get asked about the program.",
+          "ref": "If you want young women's childbirth to be quick, you must give them the hen's very first egg."
         }
       ]
     }

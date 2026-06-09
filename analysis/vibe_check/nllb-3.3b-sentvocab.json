@@ -1,0 +1,56 @@
+{
+  "run": "nllb-3.3b-sentvocab",
+  "kind": "nllb-seq2seq",
+  "nan_or_inf_param_tensors": 0,
+  "param_tensors": 1013,
+  "sets": {
+    "in_domain": {
+      "es2nasa": [
+        {
+          "src": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "ref": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "hyp": "Adxa' Jesukristo's nwẽese'jsa Pablo's nwẽese'jsa Jesukristo's nwẽese'jsa Jesukristo's nwẽese'jsawe'sx yakh fxi'zewa'ja's."
+        },
+        {
+          "src": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "ref": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "hyp": "I'kwe'sxa' Corinto çxhabte fxi'zesawe'sxtxi jxpe'jsawe'sxtxi txãawe'sx jxpe'jsawe'sx txãawe'sx jxpe'jsawe'sx txãawe'sx jxpe'jsawe'sx txã"
+        },
+        {
+          "src": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "ref": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "hyp": "Dxusa' kwe'sxtxi jxpe'jsa Jesukristo's jxpa'yakxçxa txã'wẽ yũuwa'ja's ji'phmeesaçxáa."
+        }
+      ],
+      "nasa2es": [
+        {
+          "src": "Adxa' Pablo yaaseth, Dxus peeygãhçxa pa'yate Jesukristo jxkaahnisa. Txã'wẽ yũuwa'ja's Dxusku txhitxhçxa nvxiht.",
+          "ref": "Esta carta viene de parte de Pablo, llamado para ser un apóstol de Jesucristo, conforme a la voluntad de Dios, y de parte de nuestro hermano Sóstenes.",
+          "hyp": "Pablo, apóstol de Cristo Jesús por la gracia de Dios y por el llamado de Dios."
+        },
+        {
+          "src": "Korinto çxhabte yakhthẽ'jwe'sxtxi weçxana fxi'jaçthu, txã'wẽy yakhthẽ'j Sosteneswa yuwe weçxaakaja'k. I'kwe'sxa' Kristo Jesus yakh txutemée fxi'zeya' utxaapa'ga Dxus luuçxi'kwe. Majũwe'sxwa kwe'sxtxi jxpe'jsa Jesukristo yasena kxsussa ũstxna txãawe'sx yã'jçxa ja'daçxah txajx tasxte yuuçxáa fxi'zekahnku Dxusa' pa'ya. Txãa Jesukristo' kwe'sx jxukaysatx jxpe'jsa'.",
+          "ref": "Es enviada a la iglesia de Dios en Corinto, a aquellos que han sido justificados en Cristo Jesús, llamados para vivir en santidad, y a todos los que adoran al Señor Jesús en todas partes, el Señor de ellos y de nosotros.",
+          "hyp": "Esta carta viene de parte de mi hermano Sostenes, y de la iglesia de Dios en Corinto, la cual ha sido llamada a ser santa en Cristo Jesús, y que está en el reino de Dios por medio de Jesucristo nuestro Señor y Señor."
+        },
+        {
+          "src": "I'kwe'sxtxi' Dxusa' pu'çxhina vxite' kwe'sxtxi jxpe'jsa Jesukristowa. Txãa pa'ga Dxus yakhçxáa mfxi'zewe. Jesukristo pu'çxpa'ga Dxusa' kĩh yuhwa peejxmée jxukak pees",
+          "ref": "Reciban gracia y paz de parte de Dios, nuestro Padre, y del Señor Jesucristo.",
+          "hyp": "La gracia de Dios y de nuestro Señor Jesucristo sea con ustedes."
+        }
+      ]
+    },
+    "out_of_domain": {
+      "es2nasa": [
+        {
+          "src": "El gobierno aprobó una nueva ley económica.",
+          "hyp": "U'yuk txã'wẽy yu'sa's ya'pçxa's ya'pçxa's ya'pçxa's ya'pçxa's ya'pçxa'."
+        },
+        {
+          "src": "Por favor reinicie el servidor desde la terminal.",
+          "hyp": "Txã'wẽyçxáatx pta'sxya's pta'sxya's pta'sxya's pta'sxya's pta'sxya's pta'sxya's pta'sxya's pta'sxya's pta'sx"
+        }
+      ]
+    }
+  }
+}
