@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "limit": 120,
+    "max_new_tokens": 128,
+    "batch_size": 8
+  },
+  "runs": {
+    "nllb-600m-sent": {
+      "subset": "sentence_only",
+      "wall_s": 976.5,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.06,
+          "chrf": 23.27,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 5.91,
+          "chrf": 25.83,
+          "n": 120
+        }
+      }
+    },
+    "nllb-600m-sentvocab": {
+      "subset": "sentence_plus_vocab",
+      "wall_s": 910.6,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.01,
+          "chrf": 23.6,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 7.59,
+          "chrf": 28.16,
+          "n": 120
+        }
+      }
+    },
+    "nllb-1.3b-sent": {
+      "subset": "sentence_only",
+      "wall_s": 1432.5,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.14,
+          "chrf": 25.73,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 9.97,
+          "chrf": 31.44,
+          "n": 120
+        }
+      }
+    },
+    "nllb-1.3b-sentvocab": {
+      "subset": "sentence_plus_vocab",
+      "wall_s": 1385.1,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.6,
+          "chrf": 26.69,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 12.12,
+          "chrf": 33.49,
+          "n": 120
+        }
+      }
+    },
+    "nllb-3.3b-sent": {
+      "subset": "sentence_only",
+      "wall_s": 3582.1,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.08,
+          "chrf": 24.66,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 8.18,
+          "chrf": 29.63,
+          "n": 120
+        }
+      }
+    },
+    "nllb-3.3b-sentvocab": {
+      "subset": "sentence_plus_vocab",
+      "wall_s": 3412.3,
+      "scores": {
+        "spa_Latn->pbb_Latn": {
+          "bleu": 1.49,
+          "chrf": 25.96,
+          "n": 120
+        },
+        "pbb_Latn->spa_Latn": {
+          "bleu": 9.36,
+          "chrf": 30.04,
+          "n": 120
+        }
+      }
+    }
+  }
+}
