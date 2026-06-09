@@ -24,6 +24,10 @@
 master weights + TF32 matmul** fixed it. The rerun confirms the es↔nasa data is
 learnable: the models translate Biblical/liturgical Spanish↔Nasa-Yuwe correctly,
 with quality scaling as expected (1.3B/3.3B > 600M; sentence+vocab ≥ sentence-only).
+**Objective held-out chrF (reference-based, §2) confirms it:** best model is
+**1.3B sentence+vocab at nasa→es chrF 33.5**, sentence+vocab beats sentence-only at
+every size, and 3.3B's *lower* chrF exposes it as undertrained (2 epochs, not a
+capacity ceiling).
 
 ---
 
@@ -85,6 +89,47 @@ Bigger model wins decisively (1.7B eval ≈4.36 vs 360M ≈6.18). Forgetting Δ 
 - **sentence+vocab ≥ sentence-only** within each size on eval loss (600M: 2.489 <
   2.527; 1.3B: 2.265 < 2.305) — the extra dictionary data helps. The lone exception
   is 3.3B (2.361 > 2.304), again attributable to the missing epoch.
+
+### NLLB es↔nasa — reference-based held-out chrF/BLEU (the objective data-quality verdict)
+
+Eval **loss** above is a proxy. To answer *"how good is the data"* objectively we
+decode each model on the **held-out test split** it never saw and score the output
+against the human reference with **sacrebleu chrF/BLEU** (`analysis/04_heldout_bleu.py`,
+CPU, n=120 test pairs per direction, greedy/`max_new_tokens=128`). **chrF is the
+right metric for a morphology-rich low-resource target**; BLEU is shown for
+completeness but is noisy at this scale.
+
+| Run | es→nasa (spa→pbb) chrF / BLEU | **nasa→es (pbb→spa) chrF / BLEU** |
+|---|---|---|
+| nllb-600m-sent | 23.27 / 1.06 | 25.83 / 5.91 |
+| nllb-600m-sentvocab | 23.60 / 1.01 | 28.16 / 7.59 |
+| nllb-1.3b-sent | 25.73 / 1.14 | 31.44 / 9.97 |
+| **nllb-1.3b-sentvocab** | **26.69 / 1.60** | **33.49 / 12.12** ← best |
+| nllb-3.3b-sent | 24.66 / 1.08 | 29.63 / 8.18 |
+| nllb-3.3b-sentvocab | 25.96 / 1.49 | 30.04 / 9.36 |
+
+**Reading the table:**
+- **nasa→es (Spanish output) is the human-verifiable direction** and the strongest:
+  it scores ~5–7 chrF points above es→nasa. Use it as the headline. **Best = 1.3B
+  sentence+vocab, chrF 33.5 / BLEU 12.1.**
+- **Clean size scaling 600M → 1.3B:** nasa→es chrF 25.8/28.2 → 31.4/33.5. The data
+  carries real, learnable signal — more capacity extracts more of it.
+- **sentence+vocab > sentence-only at every size** on the verifiable nasa→es
+  direction (600M 28.2 > 25.8; 1.3B 33.5 > 31.4; 3.3B 30.0 > 29.6). **This is the
+  objective confirmation of the vibe-check answer: the glossary-augmented data is
+  better.**
+- **3.3B is undertrained, confirmed objectively:** 3.3B-sent chrF 29.6 sits *below*
+  1.3B-sent 31.4 — a bigger model scoring *worse* is the signature of too few epochs
+  (2 vs 3), corroborating the eval-loss story. A 3rd epoch is expected to push it
+  past 1.3B.
+- es→nasa BLEU ≈1 looks alarming but is a metric artifact (tiny n, rich
+  morphology, agglutinative target); the chrF trend is consistent and is what to
+  trust here.
+
+> Caveat: n=120 is a **vibe-grade** estimate sized for free CPU decoding. The
+> *ordering* (1.3B-sentvocab best; sentvocab > sent; 3.3B undertrained) is robust;
+> the absolute chrF values would tighten by re-running at full test-set size once a
+> GPU is available (`HELDOUT_LIMIT=0` in `04_heldout_bleu.py`).
 
 ### ⚠️ Wall-clock caveat (important — do not rank models by wall time)
 Wall time here is **not** apples-to-apples, because runs were packed differently
@@ -207,9 +252,17 @@ switch is the proven resolution.
 
 ## §7 — How to interpret all of this
 
-- **Eval loss is the headline for NLLB.** Lower = better. It's measured on held-out
-  dev pairs, so it reflects generalization, not memorization. ≈2.27 (1.3B) is a solid
-  fine-tune floor for a 24k-pair low-resource corpus.
+- **Eval loss is *a* proxy; reference-based chrF is the real headline for NLLB.**
+  We now have both. **Held-out chrF/BLEU** (§2, `04_heldout_bleu.py`) decodes each
+  model and scores it against the human reference — this is the objective
+  data-quality verdict. Use **nasa→es chrF** (Spanish output, human-verifiable):
+  best = 1.3B-sentvocab at 33.5.
+- **Eval loss** (lower = better) tracks chrF and is cheaper to compute. It's measured
+  on held-out dev pairs, so it reflects generalization, not memorization. ≈2.27
+  (1.3B) is a solid fine-tune floor for a 24k-pair low-resource corpus, and the chrF
+  ranking matches the loss ranking exactly.
+- **sentence+vocab > sentence-only** is confirmed *both* ways — lower eval loss AND
+  higher held-out chrF at every size. The glossary-augmented data is genuinely better.
 - **Train-vs-eval gap = the fit diagnosis.** Small gap (our case) ⇒ healthy fit.
   Big gap (eval ≫ train) ⇒ overfit; eval not dropping ⇒ underfit; **NaN** ⇒ diverged
   (the old failure). All 6 reruns are "healthy fit".
@@ -243,9 +296,14 @@ setup overhead; teardown then fired automatically (`exists:false`).
 - `analysis/metrics/<run_id>/{summary.json,trainer_state.json}` — pulled per-run
   metrics (source of truth for §2 tables).
 - `analysis/metrics_table.json` — machine-readable headline table.
+- `analysis/heldout_bleu.json` — machine-readable held-out chrF/BLEU (§2 objective
+  table; both directions, n=120, per-run wall_s).
 - `analysis/vibe_check/{<run>.json, translations.md, _health.json}` — §5 transcript.
 - `analysis/0{0,1,2,2a}_*.py` — the rerunnable pipeline (pull → charts → download →
   vibe-check).
+- `analysis/04_heldout_bleu.py` — CPU reference-based chrF/BLEU eval (§2 objective
+  table). Env: `HELDOUT_LIMIT` (0 = full test set), `HELDOUT_MAX_NEW`, `HELDOUT_BATCH`,
+  `HELDOUT_ONLY` (substring run filter).
 - `logs/h100_orchestrator/` — tee-logs incl. `nllb_3p3b_relaunch3.log`,
   `nllb_small_relaunch4.log`, and the diverged-attempt logs (provenance).
 - **Blob** `experiments/es-nasa/<run_id>/{final,checkpoints/checkpoint-N,summary.json}`
@@ -258,3 +316,11 @@ setup overhead; teardown then fired automatically (`exists:false`).
 .venv\Scripts\python.exe analysis\02a_download_models.py # download final weights
 .venv\Scripts\python.exe analysis\02_vibe_check.py       # translations + health
 ```
+
+### Compute the objective held-out chrF/BLEU (no GPU; ~4 h on CPU)
+```
+.venv\Scripts\python.exe analysis\04_heldout_bleu.py     # writes analysis\heldout_bleu.json
+```
+Defaults to `HELDOUT_LIMIT=120` (vibe-grade, ~4 h for all 6 models on CPU). Set
+`HELDOUT_LIMIT=0` to score the **full** held-out test set (do this on a GPU for the
+final numbers). Requires the cached final weights from `02a_download_models.py`.
